@@ -4,6 +4,7 @@
     <div class="product-photo">{% if product.has_available_image %}<img src="{% url 'product_image' product.pk %}" alt="{{ product.name }}" width="480" height="360" loading="lazy" decoding="async" data-fallback="{% static 'images/placeholder.svg' %}">{% else %}<img src="{% static 'images/placeholder.svg' %}" alt="Foto do produto indisponível" width="480" height="360" loading="lazy">{% endif %}</div>
     <div class="product-body">
       <h3>{{ product.name }}</h3>
+      {% if product.illustration_key and product.has_available_image %}<p class="illustration-caption">Imagem ilustrativa gerada por IA.</p>{% endif %}
       {% if product.is_selected %}<p class="selected-label">Já selecionado</p>
       {% else %}
         <div class="store-links">{% for link in product.links.all %}{% with store=link.store %}

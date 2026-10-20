@@ -18,11 +18,12 @@ class PreserveDataMigrationTests(TransactionTestCase):
             product=Product.objects.create(name='Preservar',created_by=user,submission_key=uuid.uuid4(),image='products/keep.webp')
             Link.objects.create(product=product,url='https://shop.example/keep',position=0)
             choice=Selection.objects.create(product=product,owner_digest='keep-owner',first_name='Ana',surname='Silva')
-            executor=MigrationExecutor(connection);executor.migrate([('gifts','0004_preserve_existing_panel_access')])
+            executor=MigrationExecutor(connection);executor.migrate(executor.loader.graph.leaf_nodes())
             from gifts.models import Product as CurrentProduct, Selection as CurrentSelection
             from django.contrib.auth import get_user_model
             current=CurrentProduct.objects.get(pk=product.pk)
             self.assertEqual(current.name,'Preservar');self.assertEqual(current.image.name,'products/keep.webp');self.assertEqual(current.revision,0)
+            self.assertEqual(current.illustration_key,'');self.assertEqual(current.illustration_digest,'')
             self.assertEqual(current.links.get().url,'https://shop.example/keep')
             self.assertEqual(CurrentSelection.objects.get(pk=choice.pk).owner_digest,'keep-owner')
             manager=get_user_model().objects.get(pk=user.pk)

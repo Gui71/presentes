@@ -130,18 +130,18 @@ class WorkflowTests(TestCase):
                 "links-TOTAL_FORMS": "2", "links-INITIAL_FORMS": "0", "links-MIN_NUM_FORMS": "1", "links-MAX_NUM_FORMS": "10",
                 "links-0-url": "https://www.mercadolivre.com.br/panela", "links-1-url": "https://www.magazineluiza.com.br/panela"}
 
-    @patch("gifts.views.obtain_product_image", return_value=None)
+    @patch("gifts.external.obtain_product_image")
     def test_multiple_links_preserve_order_and_duplicate_submission_is_idempotent(self, obtain):
         data = self.product_data()
         for _ in range(2):
             self.assertRedirects(self.client.post(reverse("create_product"), data), reverse("panel"))
         product = Product.objects.get(name="Panela")
         self.assertEqual(list(product.links.values_list("url", flat=True)), [data["links-0-url"], data["links-1-url"]])
-        self.assertEqual(obtain.call_count, 1)
+        obtain.assert_not_called()
         self.assertEqual(Product.objects.filter(name="Panela").count(), 1)
         self.assertFalse(product.image)
 
-    @patch("gifts.views.obtain_product_image", return_value=None)
+    @patch("gifts.external.obtain_product_image")
     def test_invalid_and_forged_product_forms_never_extract(self, obtain):
         data = self.product_data()
         data["links-0-url"] = "http://127.0.0.1/private"
@@ -151,13 +151,11 @@ class WorkflowTests(TestCase):
         obtain.assert_not_called()
 
     def test_reencoded_photo_is_stored_and_delivered_only_after_identification(self):
-        from gifts.external import recode_image
-        from .test_external import raster
         with tempfile.TemporaryDirectory() as media, override_settings(MEDIA_ROOT=media):
             data = self.product_data()
-            with patch("gifts.views.obtain_product_image", return_value=recode_image(raster())):
-                self.assertEqual(self.client.post(reverse("create_product"), data).status_code, 302)
-            product = Product.objects.get(name="Panela")
+            data["name"] = "Kit Panelas"
+            self.assertEqual(self.client.post(reverse("create_product"), data).status_code, 302)
+            product = Product.objects.get(name="Kit Panelas")
             self.assertTrue(product.image.storage.exists(product.image.name))
             guest = Client()
             url = reverse("product_image", args=[product.pk])

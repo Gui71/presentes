@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import PermissionDenied
-from django.core.files.base import ContentFile
 from django.db import IntegrityError, transaction
 from django.db.models import Exists, OuterRef, F
 from django.http import FileResponse, Http404, HttpResponseBadRequest
@@ -15,7 +14,6 @@ from django.urls import reverse_lazy
 from django.utils.crypto import salted_hmac
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
-from .external import obtain_product_image
 from .forms import LinkFormSet, ManagerAuthenticationForm, ProductForm, VisitorForm
 from .models import Product, ProductLink, Selection
 
@@ -121,27 +119,18 @@ def create_product(request):
     if not (valid_form and valid_links):
         return render(request, "painel.html", panel_context(request, form, links, key), status=400)
     urls = [link["url"] for link in links.cleaned_data if link.get("url")]
-    image = obtain_product_image(urls, form.cleaned_data["name"])
-    saved_image = None
     try:
         with transaction.atomic():
             product = Product.objects.create(name=form.cleaned_data["name"], created_by=request.user, submission_key=key)
             ProductLink.objects.bulk_create([
                 ProductLink(product=product, url=url, position=position) for position, url in enumerate(urls)
             ])
-            if image:
-                product.image.save("product.webp", ContentFile(image), save=True)
-                saved_image = product.image
     except IntegrityError:
-        if saved_image:
-            saved_image.delete(save=False)
         if not Product.objects.filter(submission_key=key, created_by=request.user).exists():
             raise
     else:
-        if image:
-            messages.success(request, "Presente cadastrado com sucesso.")
-        else:
-            messages.warning(request, "Presente cadastrado. Não foi possível obter a foto das lojas; usamos a imagem padrão.")
+        messages.success(request, "Presente cadastrado com sucesso.")
+        apply_missing_illustration(request, product)
     return redirect("panel")
 
 
@@ -256,16 +245,13 @@ def edit_product(request, pk):
             try:
                 revision = int(request.POST.get("revision", ""))
                 urls = [item["url"] for item in links.cleaned_data if item.get("url")]
-                refresh = urls != old_urls
-                photo = obtain_product_image(urls, form.cleaned_data["name"]) if refresh else None
-                result = update_product(pk, revision, form.cleaned_data["name"], urls, photo, refresh)
+                result = update_product(pk, revision, form.cleaned_data["name"], urls)
             except (ProductConflict, ValueError) as exc:
                 messages.warning(request, str(exc) if isinstance(exc, ProductConflict) else "Atualize o painel e tente novamente.")
                 return render(request, "painel.html", panel_context(request), status=409)
-            if refresh and not photo:
-                messages.warning(request, "Item atualizado. A busca de foto falhou; mantivemos a foto anterior válida ou a imagem padrão.")
-            else:
-                messages.success(request, "Presente atualizado.")
+            messages.success(request, "Presente atualizado. Imagens existentes foram preservadas; use Rever ilustração para substituí-las.")
+            if not result.has_available_image:
+                apply_missing_illustration(request, result)
             return redirect("panel")
         status = 400
         revision = request.POST.get("revision", revision)
@@ -296,26 +282,58 @@ def delete_product(request, pk):
     return render(request, "painel.html", {**panel_context(request), "deleting_product": product})
 
 
+def apply_missing_illustration(request, product):
+    from .illustrations.service import apply_illustration
+    from .services import ProductConflict
+    try:
+        result = apply_illustration(product.pk, product.revision)
+    except (OSError, ValueError, ProductConflict):
+        messages.warning(request, "Os dados foram salvos. Não foi possível aplicar a ilustração; tente pelo painel.")
+        return
+    if result == "no_match":
+        messages.info(request, "Os dados foram salvos com a imagem padrão: ainda não há ilustração compatível no catálogo. Use um nome claro ou solicite a inclusão deste objeto.")
+
+
 @manager_required
 @permission_required("gifts.change_product", raise_exception=True)
-@require_POST
-def retry_product_image(request, pk):
-    from .services import valid_stored_image, remove_unused_image
+@require_http_methods(["GET", "POST"])
+def apply_product_illustration(request, pk):
+    from .illustrations.service import apply_illustration
+    from .services import ProductConflict
     product = get_object_or_404(Product, pk=pk)
-    if valid_stored_image(product.image):
+    if request.method == "POST":
+        try:
+            revision = int(request.POST.get("revision", ""))
+            result = apply_illustration(pk, revision, replace_existing=request.POST.get("replace_image") == "1")
+        except ProductConflict as exc:
+            messages.warning(request, str(exc))
+            return render(request, "painel.html", panel_context(request), status=409)
+        except (OSError, ValueError):
+            messages.warning(request, "Não foi possível aplicar a ilustração. A imagem anterior foi preservada; confira o catálogo e tente novamente.")
+            return render(request, "painel.html", panel_context(request), status=400)
+        message = {
+            "applied": "Ilustração aplicada e salva. Confira o produto real nos anúncios.",
+            "unchanged": "Esta ilustração já está aplicada; o arquivo foi reutilizado.",
+            "preserved": "Imagem existente preservada. Abra Rever ilustração para confirmar a substituição.",
+            "no_match": "Sem ilustração compatível. Use um nome claro ou solicite a inclusão deste objeto no catálogo.",
+        }[result]
+        messages.info(request, message)
         return redirect("panel")
-    old_name = product.image.name
-    revision = product.revision
-    urls = list(product.links.values_list("url", flat=True))
-    photo = obtain_product_image(urls, product.name)
-    if photo:
-        saved = product.image.storage.save(f"products/{uuid.uuid4().hex}.webp", ContentFile(photo))
-        if not Product.objects.filter(pk=pk, revision=revision, image=old_name).update(image=saved, revision=F("revision") + 1):
-            product.image.storage.delete(saved)
-            messages.warning(request, "O item mudou durante a busca. Atualize o painel e tente novamente.")
-        else:
-            remove_unused_image(product.image.storage, old_name)
-            messages.success(request, "Foto obtida e salva.")
-    else:
-        messages.warning(request, "Não foi possível obter a foto dos anúncios. A imagem padrão foi mantida.")
-    return redirect("panel")
+    return render(request, "painel.html", {**panel_context(request), "illustrating_product": product})
+
+
+@manager_required
+@permission_required("gifts.change_product", raise_exception=True)
+@require_GET
+def illustration_preview(request, pk):
+    import io
+    from .illustrations import read_illustration
+    product = get_object_or_404(Product, pk=pk)
+    candidate = product.catalog_illustration
+    if candidate is None:
+        raise Http404
+    try:
+        data = read_illustration(candidate)
+    except (OSError, ValueError):
+        raise Http404 from None
+    return FileResponse(io.BytesIO(data), content_type="image/webp")

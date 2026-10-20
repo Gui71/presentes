@@ -27,7 +27,7 @@ Preferir Django 5.2 LTS com patch de segurança atualizado e Python compatível,
 - Cadastro de presentes: somente superusuário e usuários ativos autorizados explicitamente no backend.
 - Manter o painel próprio para cadastro; Django admin fica para administração geral e concessão de acessos.
 - O formulário do item contém apenas Nome do produto e Inserir link do anúncio, repetível por + outro link. Não adicionar campos de preço, descrição, categoria ou upload de foto.
-- Tentar obter a foto pelo primeiro link; se falhar, tentar os seguintes na ordem. Falhas externas não podem impedir o cadastro.
+- Ilustrações são geradas na conversa e reutilizadas de um catálogo local, conforme escolha explícita de custo zero. Não integrar API paga nem extrair fotos dos links no cadastro/edição.
 - Nunca expor credenciais, sessões, nomes de visitantes ou detalhes internos desnecessários nas respostas públicas.
 - Versionar .env.example; ignorar .env e arquivos locais com segredos.
 - Versionar o requirements.txt com todas as bibliotecas necessárias, vou rodar o sistema no meu servidor na nuvem, então já deixe preparado para tal.
@@ -51,24 +51,28 @@ Preferir Django 5.2 LTS com patch de segurança atualizado e Python compatível,
 - Configurar cabeçalhos de segurança compatíveis com os recursos usados. HSTS e confiança em proxy exigem configuração conhecida do ambiente.
 - Não coletar CPF, telefone ou e-mail dos visitantes. Não registrar senhas, cookies, tokens ou dados pessoais desnecessários em logs.
 
-## Links externos e imagens
+## Links externos e ilustrações
 
-- A extração de metadados ocorre no backend, somente a pedido de usuário autorizado e sem criar proxy público de URLs.
+- Usar somente o nome cadastrado para correspondência explícita no catálogo local. Não buscar páginas das lojas, interpretar URLs opacas ou enviar dados a provedores de geração. Nome desconhecido, ambíguo ou variante não coberta usa imagem padrão e aviso útil.
+- As ilustrações foram geradas com a ferramenta de imagens da OpenAI na conversa, sem API em runtime. Novos objetos precisam de inclusão manual, revisão e atualização versionada do catálogo. Não simular geração online, fila ou status gerando.
+- Preservar imagens válidas existentes até substituição explícita com prévia, permissão e POST/CSRF. A lista enviada pelo usuário define os objetos do catálogo; não é autorização para criar presentes reais ou duplicar suas quantidades.
 - Validar esquema HTTP/HTTPS, hostname e porta. Bloquear credenciais na URL, localhost, redes privadas, loopback, link-local, metadados de nuvem e demais destinos não públicos, em IPv4 e IPv6.
 - Aplicar a mesma proteção às páginas, imagens e redirecionamentos. Validar o destino efetivamente conectado para evitar DNS rebinding; uma checagem DNS separada não basta.
 - Limitar tempo total, tentativas, redirecionamentos, bytes e dimensões de imagens. Verificar TLS; não contornar CAPTCHA, autenticação ou bloqueios das lojas.
 - Tratar HTML e metadados como dados não confiáveis; nunca executar scripts externos. Validar e recodificar imagens raster antes de armazená-las; não servir HTML/SVG remoto como foto.
 - Identificar loja por hostname normalizado e correspondência correta de domínio, nunca por substring. Links desconhecidos recebem botão neutro.
-- Processar e armazenar a imagem no cadastro, evitando consultas às lojas em cada visita pública. Usar imagem padrão local quando necessário.
+- Validar bytes, hash, formato raster e dimensões do asset local; copiar a ilustração para mídia persistente em operação administrativa. Guardar origem/chave/hash no produto, identificar IA discretamente e manter o anúncio como referência do produto real.
+- Restrições de transporte/SSRF acima continuam aplicáveis a qualquer futuro fetch. O fluxo atual não faz chamadas de rede para imagens; gifts.external mantém validação de links, recodificação e testes do transporte anterior.
 - Links de compra abrem em nova aba com rel="noopener noreferrer".
 
 ## Validação e entrega
 
-Criar migrations para alterações de modelos e testes focados nos fluxos, permissões, sessões, CSRF e extração segura de imagens. Simular serviços externos nos testes.
+Criar migrations para alterações de modelos e testes focados nos fluxos, permissões, sessões, CSRF, correspondência do catálogo, preservação de mídia e recusa de resultados obsoletos. Manter testes de segurança do transporte; não depender de serviços externos.
 
 Executar ao final:
 
     python manage.py check
+    python manage.py check_illustrations
     python manage.py makemigrations --check --dry-run
     python manage.py test
     python manage.py migrate --noinput
@@ -87,7 +91,7 @@ Entregar código, migrations, testes, requirements.txt, .env.example, .gitignore
 - Exigir gifts.view_product para o painel e permissões separadas add_product, change_product e delete_product nas operações. Não conceder edição, exclusão ou exportação automaticamente a quem cadastra. A migration preserva o acesso de leitura dos gestores anteriores.
 - Bloquear edição e exclusão de presentes com escolha ativa, inclusive por chamada direta e em corrida com confirmação. Primeiro um gestor autorizado cancela a escolha. Não transferir nem apagar escolhas silenciosamente.
 - Cards selecionados inteiros ficam esmaecidos e sem âncoras/botões de compra; cancelamento legítimo fica fora do card. Cancelar restaura links e grupo de disponíveis.
-- Editar mantém nome e links ordenados; mudanças nos links reprocessam a foto. Se a busca falhar, preservar foto anterior válida; usar fallback se ausente/inválida. Permitir retry protegido de foto ausente.
+- Editar mantém nome e links ordenados, preservando imagens existentes. Alterar apenas links não reprocessa imagem. Uma imagem ausente pode ser preenchida pelo catálogo; substituições usam Rever ilustração, prévia e confirmação explícita. Versão do item impede substituir após edição/exclusão concorrente; aplicar imagem não altera seleção.
 - Exportações exigem permissões específicas export_database e export_selections, inicialmente só superusuário. Usar POST/CSRF, attachment, no-store, temporários privados com limpeza; snapshot SQLite pela API backup, planilha só com nome+sobrenome e presente ativo, tudo como texto literal.
 - Tipografia em rem, base próxima de 18px e controles de pelo menos 16px; preservar cores, fundo e grade 3/2/1.
 - reset_total.py é artefato separado, fora do Git e da imagem/contexto Docker. Nunca executar no banco real; validar somente em diretórios/bancos temporários. Exigir simulação, recusa de produção, processos parados, confirmação textual e backup privado antes de remover dados.

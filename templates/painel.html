@@ -9,17 +9,33 @@
 </section>
 {% if can_add_products or editing_product %}<dialog id="product-modal" class="modal product-modal" aria-labelledby="produto-titulo" {% if editing_product %}data-return-focus="edit-{{ editing_product.pk }}"{% endif %} {% if open_product_modal %}open{% endif %}>
   <div class="modal-heading"><div><p class="eyebrow">Para o nosso cantinho</p><h2 id="produto-titulo">{% if editing_product %}Editar presente{% else %}Adicionar novo item{% endif %}</h2></div><button class="icon-button" type="button" data-close aria-label="Fechar cadastro">×</button></div>
-  <form action="{% if editing_product %}{% url 'edit_product' editing_product.pk %}{% else %}{% url 'create_product' %}{% endif %}" method="post" data-loading="Salvando e buscando a foto…" id="product-form">{% csrf_token %}<input type="hidden" name="submission_key" value="{{ submission_key }}">{% if editing_product %}<input type="hidden" name="revision" value="{{ revision }}">{% endif %}
+  <form action="{% if editing_product %}{% url 'edit_product' editing_product.pk %}{% else %}{% url 'create_product' %}{% endif %}" method="post" data-loading="Salvando…" id="product-form">{% csrf_token %}<input type="hidden" name="submission_key" value="{{ submission_key }}">{% if editing_product %}<input type="hidden" name="revision" value="{{ revision }}">{% endif %}
     <div class="field"><label for="{{ product_form.name.id_for_label }}">Nome do produto</label>{{ product_form.name }}{% for error in product_form.name.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}</div>
     {{ link_forms.management_form }}
     {% if link_forms.non_form_errors %}<div class="field-error" role="alert">{{ link_forms.non_form_errors }}</div>{% endif %}
     <div id="link-fields">{% for form in link_forms %}<div class="link-row"><div class="field"><label for="{{ form.url.id_for_label }}">Inserir link do anúncio{% if not forloop.first %} {{ forloop.counter }}{% endif %}</label>{{ form.url }}{% for error in form.url.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}</div>{% if not forloop.first %}<button type="button" class="remove-link" aria-label="Remover este link">Remover</button>{% endif %}</div>{% endfor %}</div>
     <template id="link-template"><div class="link-row"><div class="field"><label for="id_links-__prefix__-url">Inserir link do anúncio</label><input type="url" name="links-__prefix__-url" id="id_links-__prefix__-url" maxlength="2048" placeholder="https://…" required></div><button type="button" class="remove-link" aria-label="Remover este link">Remover</button></div></template>
     <button type="button" class="text-button add-link" id="add-link">+ outro link</button>
-    <p class="form-hint">Tentamos obter a foto na ordem dos links. Se não for possível, o presente será salvo com uma imagem padrão.</p>
+    <p class="form-hint">Usamos uma ilustração do catálogo quando o nome identifica um objeto disponível. Os links servem para conferir e comprar o produto real. Imagens existentes são preservadas.</p>
     <p class="form-status" role="status" aria-live="polite"></p>
     <div class="form-actions"><button type="button" class="button secondary" data-close>Cancelar</button><button type="submit" class="button primary">Salvar presente</button></div>
   </form>
 </dialog>{% endif %}
 {% if deleting_product %}<dialog id="delete-modal" class="modal" data-return-focus="delete-{{ deleting_product.pk }}" open aria-labelledby="excluir-titulo"><h2 id="excluir-titulo">Excluir este presente?</h2><p><strong>{{ deleting_product.name }}</strong></p><p>O presente e seus links serão removidos da lista. Esta ação só é permitida se ele continuar disponível.</p><form method="post" action="{% url 'delete_product' deleting_product.pk %}" data-loading="Excluindo…">{% csrf_token %}<input type="hidden" name="revision" value="{{ deleting_product.revision }}"><div class="form-actions"><button class="button secondary" type="button" data-close>Voltar</button><button class="button primary" type="submit">Confirmar exclusão</button></div></form></dialog>{% endif %}
+{% if illustrating_product %}
+<dialog id="illustration-modal" class="modal" data-return-focus="illustration-{{ illustrating_product.pk }}" open aria-labelledby="ilustracao-titulo">
+  <h2 id="ilustracao-titulo">Ilustração do presente</h2>
+  <p><strong>{{ illustrating_product.name }}</strong></p>
+  {% if illustrating_product.catalog_illustration %}
+    <img class="illustration-preview" src="{% url 'illustration_preview' illustrating_product.pk %}" width="480" height="360" alt="Prévia: {{ illustrating_product.catalog_illustration.label }}">
+    <p>Imagem ilustrativa gerada por IA. Não representa uma marca, modelo, cor ou quantidade exatos. Confira o produto real nos anúncios.</p>
+    {% if illustrating_product.has_available_image %}<p>A imagem atual será substituída somente ao confirmar.</p>{% endif %}
+    <form method="post" action="{% url 'apply_illustration' illustrating_product.pk %}" data-loading="Aplicando…">{% csrf_token %}
+      <input type="hidden" name="revision" value="{{ illustrating_product.revision }}">
+      <input type="hidden" name="replace_image" value="1">
+      <div class="form-actions"><button class="button secondary" type="button" data-close autofocus>Voltar</button><button class="button primary" type="submit">Usar esta ilustração</button></div>
+    </form>
+  {% else %}<p>{{ illustrating_product.image_notice }}</p><button class="button secondary" type="button" data-close autofocus>Voltar</button>{% endif %}
+</dialog>
+{% endif %}
 {% endblock %}
