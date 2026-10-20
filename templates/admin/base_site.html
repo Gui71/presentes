@@ -1,0 +1,10 @@
+<!--
+  Copyright (c) 2026 Guilherme Santos. All rights reserved.
+  Developer: Guilherme Santos
+  Portfolio: https://gui71.github.io/GuilhermeOliveira_portfolio/
+  LinkedIn: https://br.linkedin.com/in/guilherme-santos777
+-->
+{% extends 'admin/base_site.html' %}{% load static %}
+{% block extrahead %}{{ block.super }}<link rel="icon" href="{% static 'images/house.svg' %}" type="image/svg+xml">{% endblock %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/credits.css' %}">{% endblock %}
+{% block footer %}{{ block.super }}<footer class="development-credits">{% include 'includes/credits.html' %}</footer>{% endblock %}

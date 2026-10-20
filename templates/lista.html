@@ -1,10 +1,17 @@
+<!--
+  Copyright (c) 2026 Guilherme Santos. All rights reserved.
+  Developer: Guilherme Santos
+  Portfolio: https://gui71.github.io/GuilhermeOliveira_portfolio/
+  LinkedIn: https://br.linkedin.com/in/guilherme-santos777
+-->
 {% extends 'base.html' %}{% load static %}
+{% block opening %}{% include 'includes/splash.html' %}{% endblock %}
 {% block content %}
 <section class="hero wrap" aria-labelledby="titulo">
   <p class="eyebrow">Uma nova fase, o mesmo carinho</p>
   <h1 id="titulo">Chá de <em>casa nova</em></h1>
   <p class="hero-description">Estamos de mudança! E queremos dividir com você a alegria de construir o nosso novo cantinho.</p>
-  <div class="event-info"><span>Guilherme &amp; Beatriz</span><span aria-hidden="true">·</span><time datetime="2026-11-22">22 de novembro de 2026</time></div>
+  <div class="event-info"><span>Beatriz &amp; Guilherme</span><span aria-hidden="true">·</span><time datetime="2026-11-22">22 de novembro de 2026</time></div>
 </section>
 {% if identified %}
 <section class="catalog wrap" aria-labelledby="presentes-titulo">
@@ -20,7 +27,7 @@
 <dialog id="choice-modal" class="modal" aria-labelledby="escolha-titulo"><p class="eyebrow">Um carinho para o nosso lar</p><h2 id="escolha-titulo">Confirmar sua escolha?</h2><p id="choice-name"></p><p class="form-hint">Ao confirmar, este presente fica marcado como já selecionado para as outras pessoas.</p><form method="post" id="choice-form" data-loading="Confirmando…">{% csrf_token %}<div class="form-actions"><button type="button" class="button secondary" data-close>Voltar</button><button type="submit" class="button primary">Confirmar escolha</button></div></form></dialog>
 {% else %}
 <section class="welcome-placeholder wrap" aria-hidden="true"><span>Feito de pequenos detalhes e grandes encontros.</span></section>
-<dialog class="modal visitor-modal" id="visitor-modal" open data-required="true" aria-labelledby="visitante-titulo">
+<dialog class="modal visitor-modal" id="visitor-modal" open closedby="none" data-required="true" aria-labelledby="visitante-titulo">
   <div class="modal-decoration"><img src="{% static 'images/house.svg' %}" width="38" height="38" alt=""></div>
   <p class="eyebrow">Que bom ter você aqui</p><h2 id="visitante-titulo">Pode entrar,<br>a casa é sua.</h2>
   <p>Antes de conhecer nossa lista, conte como podemos chamar você.</p>

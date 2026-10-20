@@ -1,6 +1,10 @@
 # Chá de casa nova
 
-Lista de presentes de Guilherme e Beatriz, em português do Brasil. Evento em **22/11/2026**; endereço ainda não informado. Django 5.2 LTS, templates HTML, CSS e JavaScript puro, na mesma origem. Sem pagamento ou integração de compra.
+Lista de presentes de Beatriz e Guilherme, em português do Brasil. Evento em **22/11/2026**; endereço ainda não informado. Django 5.2 LTS, templates HTML, CSS e JavaScript puro, na mesma origem. Sem pagamento ou integração de compra.
+
+A página inicial tem uma abertura breve com foto de sala em cinza, branco e madeira, gerada nesta conversa com a ferramenta de imagens da OpenAI e servida localmente em `static/images/living-room-splash.webp`. O zoom suave termina em cerca de 2,3 segundos e pode ser pulado pelo botão ou por Escape. A abertura aparece uma vez por aba; `sessionStorage` guarda somente essa preferência visual, sem dados de visitantes ou de autenticação. Movimento reduzido, imagem indisponível ou JavaScript desativado permitem seguir diretamente para a identificação/lista. A imagem de fundo anterior foi preservada.
+
+Conforme esclarecimento do usuário, o copyright e o crédito de desenvolvimento aparecem em todas as páginas, inclusive na administração Django. Os textos são compartilhados por um include e mantidos literalmente. Todo HTML próprio, inclusive includes e templates de subdiretórios, começa com o comentário de copyright/desenvolvimento solicitado; os links de portfólio e LinkedIn ficam apenas no comentário do código-fonte.
 
 ## Desenvolvimento
 

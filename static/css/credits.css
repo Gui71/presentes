@@ -1,0 +1,15 @@
+.site-credits {
+  flex-basis:100%;
+  padding-top:20px;
+  margin-top:4px;
+  border-top:1px solid var(--line,var(--hairline-color,#d8dfd5));
+  text-align:center}
+.site-credits p {
+  margin:0;
+  font-size:1rem;
+  line-height:1.65}
+.site-credits p+p {
+  margin-top:4px}
+.development-credits {
+  padding:0 24px 24px;
+  color:var(--body-quiet-color,inherit)}

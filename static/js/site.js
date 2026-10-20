@@ -78,3 +78,42 @@ window.addEventListener("pageshow", () => document.querySelectorAll("form[data-l
   const button = form.querySelector('button[type="submit"]');
   if (button && button.disabled) window.location.reload();
 }));
+
+(() => {
+  const splash = document.getElementById("welcome-splash");
+  if (!splash) return;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let seen = false;
+  try { seen = sessionStorage.getItem("presentes:splash-seen") === "1"; } catch {}
+  const photo = splash.querySelector("img");
+  if (seen || reducedMotion.matches || typeof splash.showModal !== "function" || (photo.complete && !photo.naturalWidth)) {
+    splash.remove();
+    return;
+  }
+  try { sessionStorage.setItem("presentes:splash-seen", "1"); } catch {}
+  let dismissed = false;
+  let exitTimer;
+  let durationTimer;
+  function finish() {
+    window.clearTimeout(exitTimer);
+    window.clearTimeout(durationTimer);
+    document.documentElement.classList.remove("splash-active");
+    if (splash.open) splash.close();
+    splash.remove();
+    const visitor = document.getElementById("visitor-modal");
+    if (visitor?.open) visitor.querySelector("[autofocus]")?.focus({preventScroll:true});
+  }
+  function dismiss() {
+    if (dismissed) return;
+    dismissed = true;
+    splash.classList.add("is-leaving");
+    exitTimer = window.setTimeout(finish, 340);
+  }
+  splash.querySelector("[data-skip-splash]").addEventListener("click", dismiss);
+  splash.addEventListener("cancel", event => { event.preventDefault(); dismiss(); });
+  photo.addEventListener("error", finish, {once:true});
+  window.addEventListener("pageshow", event => { if (event.persisted) finish(); });
+  document.documentElement.classList.add("splash-active");
+  splash.showModal();
+  durationTimer = window.setTimeout(dismiss, 1900);
+})();

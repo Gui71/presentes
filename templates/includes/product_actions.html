@@ -1,3 +1,9 @@
+<!--
+  Copyright (c) 2026 Guilherme Santos. All rights reserved.
+  Developer: Guilherme Santos
+  Portfolio: https://gui71.github.io/GuilhermeOliveira_portfolio/
+  LinkedIn: https://br.linkedin.com/in/guilherme-santos777
+-->
 <div class="product-actions">
   {% if product.is_selected %}<p class="form-hint">Cancele a escolha antes de editar ou excluir.</p>{% else %}
     {% if can_edit_products %}<a id="edit-{{ product.pk }}" class="button secondary" href="{% url 'edit_product' product.pk %}">Editar</a>{% endif %}
