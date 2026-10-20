@@ -1,0 +1,33 @@
+{% extends 'base.html' %}{% load static %}
+{% block content %}
+<section class="hero wrap" aria-labelledby="titulo">
+  <p class="eyebrow">Uma nova fase, o mesmo carinho</p>
+  <h1 id="titulo">Chá de <em>casa nova</em></h1>
+  <p class="hero-description">Estamos de mudança! E queremos dividir com você a alegria de construir o nosso novo cantinho.</p>
+  <div class="event-info"><span>Guilherme &amp; Beatriz</span><span aria-hidden="true">·</span><time datetime="2026-11-22">22 de novembro de 2026</time></div>
+</section>
+{% if identified %}
+<section class="catalog wrap" aria-labelledby="presentes-titulo">
+  <div class="section-heading"><div><p class="eyebrow">Um carinho para o nosso lar</p><h2 id="presentes-titulo">Nossa lista de presentes</h2></div><span class="count">{{ products|length }} presente{{ products|length|pluralize }}</span></div>
+  <p class="catalog-intro"><strong>Você pode escolher mais de um presente.</strong> Confirme sua escolha aqui para que ninguém escolha o mesmo item. Os botões das lojas abrem os anúncios.</p>
+  <p class="visit-hint">Mudou de ideia? Durante esta visita, você pode cancelar as suas escolhas individualmente.</p>
+  <div class="product-grid">
+  {% for product in products %}{% include 'includes/card.html' %}{% empty %}
+    <div class="empty-state"><img src="{% static 'images/house.svg' %}" width="48" height="48" alt=""><h3>Estamos preparando nosso cantinho</h3><p>Os presentes aparecerão aqui assim que forem adicionados.</p></div>
+  {% endfor %}
+  </div>
+</section>
+<dialog id="choice-modal" class="modal" aria-labelledby="escolha-titulo"><p class="eyebrow">Um carinho para o nosso lar</p><h2 id="escolha-titulo">Confirmar sua escolha?</h2><p id="choice-name"></p><p class="form-hint">Ao confirmar, este presente fica marcado como já selecionado para as outras pessoas.</p><form method="post" id="choice-form" data-loading="Confirmando…">{% csrf_token %}<div class="form-actions"><button type="button" class="button secondary" data-close>Voltar</button><button type="submit" class="button primary">Confirmar escolha</button></div></form></dialog>
+{% else %}
+<section class="welcome-placeholder wrap" aria-hidden="true"><span>Feito de pequenos detalhes e grandes encontros.</span></section>
+<dialog class="modal visitor-modal" id="visitor-modal" open data-required="true" aria-labelledby="visitante-titulo">
+  <div class="modal-decoration"><img src="{% static 'images/house.svg' %}" width="38" height="38" alt=""></div>
+  <p class="eyebrow">Que bom ter você aqui</p><h2 id="visitante-titulo">Pode entrar,<br>a casa é sua.</h2>
+  <p>Antes de conhecer nossa lista, conte como podemos chamar você.</p>
+  <form action="{% url 'identify' %}" method="post" data-loading="Prosseguindo…">{% csrf_token %}
+    {% for field in visitor_form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}</div>{% endfor %}
+    <button class="button primary full" type="submit">Prosseguir <span aria-hidden="true">→</span></button>
+  </form>
+</dialog>
+{% endif %}
+{% endblock %}
