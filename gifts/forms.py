@@ -16,8 +16,25 @@ class ManagerAuthenticationForm(AuthenticationForm):
             raise ValidationError("Sua conta não tem acesso ao painel. Consulte os anfitriões.", code="unauthorized")
 
 
-class ProductForm(forms.Form):
+class IllustrationChoiceForm(forms.Form):
+    illustration_choice = forms.ChoiceField(label="Ilustração", required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from .illustrations import catalog, normalize
+        self.fields["illustration_choice"].choices = [("", "Automática pelo nome")] + [
+            (item.key, item.label) for item in sorted(catalog(), key=lambda item: normalize(item.label))
+        ]
+
+
+class ProductForm(IllustrationChoiceForm):
     name = forms.CharField(label="Nome do produto", max_length=160, widget=forms.TextInput(attrs={"autofocus": True}))
+
+    def __init__(self, *args, include_illustration=True, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not include_illustration:
+            self.fields.pop("illustration_choice")
+        self.order_fields(["name", "illustration_choice"])
 
 
 class LinkForm(forms.Form):

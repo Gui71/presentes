@@ -27,6 +27,16 @@ document.querySelectorAll("[data-open]").forEach(button => button.addEventListen
   document.getElementById(button.dataset.open).showModal();
 }));
 document.querySelectorAll("[data-close]").forEach(button => button.addEventListener("click", () => button.closest("dialog").close()));
+document.querySelectorAll("[data-illustration-selector]").forEach(form => {
+  const select = form.querySelector("select");
+  const dialog = form.closest("dialog");
+  select.addEventListener("change", () => {
+    const changed = select.value !== form.dataset.previewChoice;
+    const confirm = dialog.querySelector("[data-confirm-illustration]");
+    if (confirm) confirm.disabled = changed;
+    dialog.querySelector("[data-preview-needed]").hidden = !changed;
+  });
+});
 document.querySelectorAll("dialog").forEach(dialog => dialog.addEventListener("close", () => previousFocus?.focus()));
 document.querySelectorAll("img[data-fallback]").forEach(image => image.addEventListener("error", () => { image.src = image.dataset.fallback; delete image.dataset.fallback; }, {once:true}));
 document.querySelectorAll("form[data-loading]").forEach(form => form.addEventListener("submit", () => {

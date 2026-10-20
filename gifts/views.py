@@ -1,5 +1,6 @@
 from functools import wraps
 import secrets
+from urllib.parse import urlencode
 import uuid
 
 from django.contrib import messages
@@ -10,11 +11,11 @@ from django.db import IntegrityError, transaction
 from django.db.models import Exists, OuterRef, F
 from django.http import FileResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.crypto import salted_hmac
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
-from .forms import LinkFormSet, ManagerAuthenticationForm, ProductForm, VisitorForm
+from .forms import IllustrationChoiceForm, LinkFormSet, ManagerAuthenticationForm, ProductForm, VisitorForm
 from .models import Product, ProductLink, Selection
 
 
@@ -121,7 +122,10 @@ def create_product(request):
     urls = [link["url"] for link in links.cleaned_data if link.get("url")]
     try:
         with transaction.atomic():
-            product = Product.objects.create(name=form.cleaned_data["name"], created_by=request.user, submission_key=key)
+            product = Product.objects.create(
+                name=form.cleaned_data["name"], illustration_choice=form.cleaned_data["illustration_choice"],
+                created_by=request.user, submission_key=key,
+            )
             ProductLink.objects.bulk_create([
                 ProductLink(product=product, url=url, position=position) for position, url in enumerate(urls)
             ])
@@ -235,7 +239,7 @@ def edit_product(request, pk):
         messages.warning(request, "Cancele a escolha antes de editar este presente.")
         return render(request, "painel.html", panel_context(request), status=409)
     old_urls = list(product.links.values_list("url", flat=True))
-    form = ProductForm(request.POST if request.method == "POST" else None, initial={"name": product.name})
+    form = ProductForm(request.POST if request.method == "POST" else None, initial={"name": product.name}, include_illustration=False)
     links = LinkFormSet(request.POST if request.method == "POST" else None, initial=[{"url": url} for url in old_urls], prefix="links")
     revision = str(product.revision)
     status = 200
@@ -291,7 +295,20 @@ def apply_missing_illustration(request, product):
         messages.warning(request, "Os dados foram salvos. Não foi possível aplicar a ilustração; tente pelo painel.")
         return
     if result == "no_match":
-        messages.info(request, "Os dados foram salvos com a imagem padrão: ainda não há ilustração compatível no catálogo. Use um nome claro ou solicite a inclusão deste objeto.")
+        messages.info(request, "Os dados foram salvos com a imagem padrão. Use Escolher ilustração no painel para selecionar uma imagem do catálogo.")
+
+
+def illustration_selection(product, data=None):
+    from .illustrations import illustration_by_key, match_illustration
+    form = IllustrationChoiceForm(data, initial={"illustration_choice": product.illustration_choice}, auto_id="id_catalog_%s")
+    if data is not None:
+        if not form.is_valid():
+            return form, None, None
+        choice = form.cleaned_data["illustration_choice"]
+    else:
+        choice = product.illustration_choice
+    candidate = illustration_by_key(choice) if choice else match_illustration(product.name)
+    return form, candidate, choice
 
 
 @manager_required
@@ -301,25 +318,38 @@ def apply_product_illustration(request, pk):
     from .illustrations.service import apply_illustration
     from .services import ProductConflict
     product = get_object_or_404(Product, pk=pk)
+    submitted = request.POST if request.method == "POST" else request.GET
+    data = submitted if "illustration_choice" in submitted else None
+    form, candidate, choice = illustration_selection(product, data)
+    context = {
+        **panel_context(request), "illustrating_product": product,
+        "illustration_form": form, "illustration_candidate": candidate, "illustration_choice": choice or "",
+        "illustration_preview_url": reverse("illustration_preview", args=[pk]) + "?" + urlencode({"illustration_choice": choice or ""}),
+    }
+    if form.is_bound and not form.is_valid():
+        return render(request, "painel.html", context, status=400)
     if request.method == "POST":
         try:
             revision = int(request.POST.get("revision", ""))
-            result = apply_illustration(pk, revision, replace_existing=request.POST.get("replace_image") == "1")
+            result = apply_illustration(
+                pk, revision, replace_existing=request.POST.get("replace_image") == "1",
+                illustration_choice=choice,
+            )
         except ProductConflict as exc:
             messages.warning(request, str(exc))
             return render(request, "painel.html", panel_context(request), status=409)
         except (OSError, ValueError):
             messages.warning(request, "Não foi possível aplicar a ilustração. A imagem anterior foi preservada; confira o catálogo e tente novamente.")
-            return render(request, "painel.html", panel_context(request), status=400)
+            return render(request, "painel.html", context, status=400)
         message = {
             "applied": "Ilustração aplicada e salva. Confira o produto real nos anúncios.",
             "unchanged": "Esta ilustração já está aplicada; o arquivo foi reutilizado.",
             "preserved": "Imagem existente preservada. Abra Rever ilustração para confirmar a substituição.",
-            "no_match": "Sem ilustração compatível. Use um nome claro ou solicite a inclusão deste objeto no catálogo.",
+            "no_match": "Sem ilustração compatível pelo nome. Escolha uma ilustração do catálogo no painel.",
         }[result]
         messages.info(request, message)
         return redirect("panel")
-    return render(request, "painel.html", {**panel_context(request), "illustrating_product": product})
+    return render(request, "painel.html", context)
 
 
 @manager_required
@@ -329,7 +359,8 @@ def illustration_preview(request, pk):
     import io
     from .illustrations import read_illustration
     product = get_object_or_404(Product, pk=pk)
-    candidate = product.catalog_illustration
+    data = request.GET if "illustration_choice" in request.GET else None
+    _, candidate, _ = illustration_selection(product, data)
     if candidate is None:
         raise Http404
     try:

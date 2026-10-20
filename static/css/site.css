@@ -27,9 +27,9 @@ main {
   flex:1}
 a {
   color:inherit}
-button,input {
+button,input,select {
   font:inherit}
-button,a,input {
+button,a,input,select {
   touch-action:manipulation}
 button,a {
    -webkit-tap-highlight-color:transparent}
@@ -46,9 +46,9 @@ h1,h2 {
   letter-spacing:-.04em}
 p {
   line-height:1.65}
-a,button,input {
+a,button,input,select {
   outline-offset:4px}
-a:focus-visible,button:focus-visible,input:focus-visible {
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible {
   outline:3px solid #9b5d27}
 button {
   border:0}
@@ -304,7 +304,7 @@ img {
   font-size:1rem;
   font-weight:650;
   margin-bottom:8px}
-.field input {
+.field input,.field select {
   border:1px solid #b9c4b8;
   border-radius:9px;
   width:100%;
@@ -312,7 +312,7 @@ img {
   padding:10px 12px;
   background:white;
   color:var(--ink)}
-.field input:focus {
+.field input:focus,.field select:focus {
   border-color:var(--green)}
 .field-error {
   color:var(--error);
@@ -629,3 +629,5 @@ to {
 .illustration-caption { color: var(--muted); font-size: 1rem; margin: 0 0 16px; }
 .selected .illustration-caption { color: #333; }
 .illustration-preview { width: 100%; height: auto; max-height: 240px; object-fit: contain; }
+[data-illustration-selector] { margin-bottom: 24px; }
+[data-confirm-illustration]:disabled { cursor: not-allowed; }

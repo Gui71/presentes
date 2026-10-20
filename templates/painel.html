@@ -11,6 +11,12 @@
   <div class="modal-heading"><div><p class="eyebrow">Para o nosso cantinho</p><h2 id="produto-titulo">{% if editing_product %}Editar presente{% else %}Adicionar novo item{% endif %}</h2></div><button class="icon-button" type="button" data-close aria-label="Fechar cadastro">×</button></div>
   <form action="{% if editing_product %}{% url 'edit_product' editing_product.pk %}{% else %}{% url 'create_product' %}{% endif %}" method="post" data-loading="Salvando…" id="product-form">{% csrf_token %}<input type="hidden" name="submission_key" value="{{ submission_key }}">{% if editing_product %}<input type="hidden" name="revision" value="{{ revision }}">{% endif %}
     <div class="field"><label for="{{ product_form.name.id_for_label }}">Nome do produto</label>{{ product_form.name }}{% for error in product_form.name.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}</div>
+    {% if product_form.illustration_choice %}<div class="field">
+      <label for="{{ product_form.illustration_choice.id_for_label }}">Ilustração (opcional)</label>
+      {{ product_form.illustration_choice }}
+      {% for error in product_form.illustration_choice.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+      <p class="form-hint">Deixe automática pelo nome ou escolha um objeto do catálogo. A imagem será exibida no card ao salvar.</p>
+    </div>{% endif %}
     {{ link_forms.management_form }}
     {% if link_forms.non_form_errors %}<div class="field-error" role="alert">{{ link_forms.non_form_errors }}</div>{% endif %}
     <div id="link-fields">{% for form in link_forms %}<div class="link-row"><div class="field"><label for="{{ form.url.id_for_label }}">Inserir link do anúncio{% if not forloop.first %} {{ forloop.counter }}{% endif %}</label>{{ form.url }}{% for error in form.url.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}</div>{% if not forloop.first %}<button type="button" class="remove-link" aria-label="Remover este link">Remover</button>{% endif %}</div>{% endfor %}</div>
@@ -26,16 +32,26 @@
 <dialog id="illustration-modal" class="modal" data-return-focus="illustration-{{ illustrating_product.pk }}" open aria-labelledby="ilustracao-titulo">
   <h2 id="ilustracao-titulo">Ilustração do presente</h2>
   <p><strong>{{ illustrating_product.name }}</strong></p>
-  {% if illustrating_product.catalog_illustration %}
-    <img class="illustration-preview" src="{% url 'illustration_preview' illustrating_product.pk %}" width="480" height="360" alt="Prévia: {{ illustrating_product.catalog_illustration.label }}">
+  <form method="get" action="{% url 'apply_illustration' illustrating_product.pk %}" data-illustration-selector data-preview-choice="{{ illustration_choice }}">
+    <div class="field"><label for="{{ illustration_form.illustration_choice.id_for_label }}">Escolher ilustração</label>
+      {{ illustration_form.illustration_choice }}
+      {% for error in illustration_form.illustration_choice.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+    </div>
+    <button class="button secondary" type="submit">Ver prévia</button>
+  </form>
+  <p class="form-hint" data-preview-needed role="status" hidden>Clique em Ver prévia para conferir a imagem escolhida antes de confirmar.</p>
+  {% if illustration_candidate %}
+    <p><strong>Prévia: {{ illustration_candidate.label }}</strong></p>
+    <img class="illustration-preview" src="{{ illustration_preview_url }}" width="480" height="360" alt="Prévia: {{ illustration_candidate.label }}">
     <p>Imagem ilustrativa gerada por IA. Não representa uma marca, modelo, cor ou quantidade exatos. Confira o produto real nos anúncios.</p>
     {% if illustrating_product.has_available_image %}<p>A imagem atual será substituída somente ao confirmar.</p>{% endif %}
     <form method="post" action="{% url 'apply_illustration' illustrating_product.pk %}" data-loading="Aplicando…">{% csrf_token %}
       <input type="hidden" name="revision" value="{{ illustrating_product.revision }}">
       <input type="hidden" name="replace_image" value="1">
-      <div class="form-actions"><button class="button secondary" type="button" data-close autofocus>Voltar</button><button class="button primary" type="submit">Usar esta ilustração</button></div>
+      <input type="hidden" name="illustration_choice" value="{{ illustration_choice }}">
+      <div class="form-actions"><button class="button secondary" type="button" data-close autofocus>Voltar</button><button class="button primary" type="submit" data-confirm-illustration>Usar esta ilustração</button></div>
     </form>
-  {% else %}<p>{{ illustrating_product.image_notice }}</p><button class="button secondary" type="button" data-close autofocus>Voltar</button>{% endif %}
+  {% else %}<p>O nome não identifica uma ilustração única. Escolha um objeto do catálogo acima e confira a prévia.</p><button class="button secondary" type="button" data-close autofocus>Voltar</button>{% endif %}
 </dialog>
 {% endif %}
 {% endblock %}

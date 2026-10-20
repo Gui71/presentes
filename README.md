@@ -30,7 +30,7 @@ No ambiente em nuvem preparado, o ambiente virtual existente fica em `/workspace
 
 O superusuário cria contas no Django admin. Para permitir o painel, marque a conta como **ativa** e conceda `gifts.view_product`. Para cadastrar, conceda também `gifts.add_product`; para editar, `gifts.change_product`; para excluir, `gifts.delete_product`. Não é necessário marcar `Membro da equipe/is_staff`; esse campo sozinho não concede acesso ao painel. As permissões de alteração, exclusão e exportação não são concedidas pelo cadastro.
 
-Para cancelar escolhas pelo painel, conceda também **Pode excluir escolha** (`gifts.delete_selection`). Superusuários ativos têm ambas. O admin exige `is_staff` e as permissões próprias do Django; o acesso ao painel não dá acesso ao admin. Não existe cadastro público de gestores. Produtos são criados pelo painel, onde nome e links passam pela extração segura de fotos; o admin mostra seus dados e permite administração geral.
+Para cancelar escolhas pelo painel, conceda também **Pode excluir escolha** (`gifts.delete_selection`). Superusuários ativos têm ambas. O admin exige `is_staff` e as permissões próprias do Django; o acesso ao painel não dá acesso ao admin. Não existe cadastro público de gestores. Produtos são criados pelo painel, com links validados e ilustrações do catálogo local; o admin mostra seus dados e permite administração geral.
 
 ## Visitantes, escolhas e privacidade
 
@@ -41,21 +41,27 @@ Para cancelar escolhas pelo painel, conceda também **Pode excluir escolha** (`g
 - O convidado pode cancelar cada uma das próprias escolhas durante a mesma sessão, preservando as outras e podendo escolher novos itens. O botão aparece apenas nas escolhas da sessão atual. O servidor exige o identificador secreto dessa sessão: **o nome não autoriza cancelamento**, e repeti-lo em outra sessão não dá acesso às escolhas anteriores. Não há token de autorização em localStorage ou armazenamento permanente no navegador.
 - As escolhas guardam nome e primeiro sobrenome para consulta exclusiva dos gestores. O identificador de autorização é armazenado como digest no registro da escolha. Quando a sessão se perde, o convidado perde o acesso ao cancelamento; a escolha permanece no banco e pode ser cancelada pelos gestores. Foi expressamente aceita a limitação de que navegadores podem restaurar sessões ao reabrir.
 
+Na área dos anfitriões (`/painel/`), a seção **Escolhas confirmadas**, abaixo dos cards, mostra cada presente reservado e o **nome + primeiro sobrenome** informados pelo convidado. Isso exige conta ativa com `gifts.view_product`; a lista pública não mostra esses nomes. Cancelar exige a permissão adicional descrita acima.
+
 Administradores usam sessão nativa do Django no servidor, cookies HttpOnly/SameSite=Lax e duração do navegador (`set_expiry(0)` nos dois logins). Não há “Lembrar de mim”, JWT ou autenticação em localStorage. Logout exige POST com CSRF e invalida a sessão no banco.
 
 **Fechar o navegador não garante encerrar a sessão:** recursos de restauração podem conservar cookies de sessão e reabrir páginas autenticadas. Testes comprovam que um cookie restaurado ainda funciona; eles não simulam uma garantia de fechamento real. Use **Sair** para invalidar o acesso administrativo. Não há mecanismos baseados em fechar aba, `unload` ou `beforeunload`.
 
 ## Cadastro e imagens
 
-O formulário mantém apenas nome do produto e links de compra ordenados, até 10. A chave de envio impede duplicação do mesmo cadastro e é vinculada à sessão do gestor.
+O formulário contém nome do produto, links de compra ordenados (até 10) e o seletor opcional de ilustração. O seletor mostra os nomes genéricos das 47 artes e começa em **Automática pelo nome**. A chave de envio impede duplicação do mesmo cadastro e é vinculada à sessão do gestor.
 
 Por escolha explícita de custo zero de API, usamos **47 ilustrações geradas nesta conversa com a ferramenta de imagens da OpenAI**, armazenadas no catálogo local. O site não chama OpenAI, fal.ai ou Pollinations, não consulta anúncios e não executa inferência na VM. A assinatura Plus é separada da API; não há chave de geração para configurar nem serviço pago a habilitar.
 
-Ao cadastrar um presente cujo nome tenha correspondência explícita, o servidor valida o asset e salva uma cópia em `MEDIA_ROOT`. Links curtos, opacos, indisponíveis ou com rastreamento não afetam a imagem. Nomes vagos, ambíguos ou objetos não cobertos ficam com o padrão local e orientação no painel. Não se escolhe uma imagem aleatória nem se interpreta o anúncio pela URL.
+Ao cadastrar um presente com nome reconhecido ou ilustração escolhida no seletor, o servidor valida o asset e salva uma cópia em `MEDIA_ROOT`. Links curtos, opacos, indisponíveis ou com rastreamento não afetam a imagem. Nomes vagos, ambíguos ou objetos não cobertos ficam com o padrão local até uma escolha manual no catálogo. Não se escolhe uma imagem aleatória nem se interpreta o anúncio pela URL.
 
 Imagens válidas existentes são preservadas. Alterar links não refaz a imagem; alterar o nome preserva o arquivo atual e pode mostrar um aviso de revisão. Para um item antigo sem imagem, use **Usar ilustração**. Para substituir uma imagem, use **Rever ilustração**, confira a prévia e confirme. A operação exige `gifts.view_product` + `gifts.change_product`, POST/CSRF e a versão atual do item. Uma seleção ativa permanece intacta; edição/exclusão da identidade do presente continuam bloqueadas.
 
-Nomes como “jogo de talher” e “toalhas” são reconhecidos. Para diagnosticar o nome exato, rode `python manage.py check_illustrations --name "toalhas"`; sem `--name`, o comando verifica apenas os arquivos. Atualizações das regras exigem reconstrução/recriação do app Docker ou reinício dos processos Django/Gunicorn, pois o catálogo fica em cache por processo. Depois, aplique a ilustração pelo painel nos itens antigos sem imagem.
+O reconhecimento aceita maiúsculas/minúsculas misturadas, acentos, pontuação e flexões controladas de singular/plural dos tipos conhecidos, incluindo **panela/panelas**, **copo/copos** e **talher/talheres**. Nomes específicos como **panela de pipoca** têm prioridade sobre o tipo genérico contido na mesma expressão. Para diagnosticar um nome, rode `python manage.py check_illustrations --name "panela"`; sem `--name`, o comando verifica apenas os arquivos. Erros de digitação arbitrários e objetos desconhecidos exigem escolha manual ou inclusão de uma nova arte.
+
+Se o nome não for reconhecido, use **Escolher ilustração** no painel, selecione um nome genérico, clique em **Ver prévia** e confirme em **Usar esta ilustração**. A escolha manual persiste e tem prioridade sobre o nome; editar nome/links preserva essa escolha e a foto. Para retornar ao modo automático, selecione **Automática pelo nome**, revise e confirme; sem correspondência, a foto e a escolha anteriores ficam preservadas.
+
+Esta atualização inclui a migration `0006_product_illustration_choice`, que preserva presentes, imagens e escolhas dos convidados. Aplique as migrations no procedimento de atualização documentado. Reconstrua/recrie o app Docker ou reinicie Django/Gunicorn para carregar as regras, pois o catálogo fica em cache por processo. Nos itens antigos sem imagem, aplique a ilustração pelo painel.
 
 O painel mostra se há ilustração compatível, se uma imagem anterior foi preservada ou se o nome mudou. Não há fila nem status de geração online: aplicar um arquivo local é uma operação curta. Repetir uma aplicação já concluída reutiliza o arquivo. Erros preservam o cadastro e a imagem anterior; edição/exclusão concorrente impede aplicar um resultado obsoleto e arquivos novos sem referência são limpos.
 
