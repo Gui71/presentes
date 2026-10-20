@@ -7,10 +7,18 @@
       "label": "Talheres",
       "aliases": [
         "faqueiro",
-        "talheres"
+        "talheres",
+        "jogo de talher",
+        "jogo talher",
+        "kit de talher",
+        "kit talher",
+        "conjunto de talher"
       ],
       "exclude": [
-        "porta talheres"
+        "porta talheres",
+        "porta talher",
+        "porta de talheres",
+        "porta de talher"
       ],
       "prompt": "A generic stainless-steel flatware set, forks, table knives and tablespoons.",
       "sha256": "a7a75d72faf7328e2c9ffa100f87f6e3e045dda4ab200fb8e0fe4c7fc5ef23c9",
@@ -23,16 +31,27 @@
       "aliases": [
         "kit toalha",
         "kit toalhas",
+        "kit de toalha",
         "kit de toalhas",
+        "jogo de toalha",
         "jogo de toalhas",
+        "jogo toalha",
         "jogo toalhas",
-        "conjunto de toalhas"
+        "conjunto de toalha",
+        "conjunto de toalhas",
+        "toalhas"
       ],
       "exclude": [
         "mesa",
         "praia",
         "piscina",
-        "boca"
+        "boca",
+        "papel",
+        "cozinha",
+        "prato",
+        "porta",
+        "suporte",
+        "varal"
       ],
       "prompt": "A folded ivory cotton bath and face towel set.",
       "sha256": "dcfea43598ecb8b97250d6bfee95a2409b5518b35f36251e6410581a515dca4a",

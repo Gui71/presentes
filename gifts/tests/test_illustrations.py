@@ -9,6 +9,7 @@ from unittest.mock import PropertyMock, patch
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.core.files.base import ContentFile
+from django.core.management import call_command, CommandError
 from django.db import IntegrityError
 from django.test import Client, SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
@@ -88,9 +89,37 @@ class CatalogTests(SimpleTestCase):
     def test_unknown_ambiguous_parts_and_unrelated_variants_do_not_get_random_illustrations(self):
         for name in ["Presente", "B07WGQ64QR", "Kit panelas e liquidificador", "Porta talheres",
                      "Copo para liquidificador", "Toalhas de mesa", "Jogo de toalhas de mesa",
-                     "Cafeteira italiana", "Chaleira", "Panela de pressão"]:
+                     "Cafeteira italiana", "Chaleira", "Panela de pressão", "Porta-talher",
+                     "Porta de talheres", "Porta de talher", "Talher", "Toalhas de praia",
+                     "Toalhas de piscina", "Toalhas de boca", "Toalhas de papel", "Toalhas de cozinha",
+                     "Toalhas de prato", "Porta-toalhas", "Suporte para toalhas", "Varal de toalhas",
+                     "jogo de talher e toalhas"]:
             with self.subTest(name=name):
                 self.assertIsNone(match_illustration(name))
+
+    def test_common_singular_set_names_and_bare_plural_towels_are_recognized(self):
+        cases = {
+            "jogo de talher": "cutlery", "JOGO DE TALHER - Tramontina": "cutlery",
+            "Jogo talher": "cutlery", "Kit de talher": "cutlery", "Kit talher": "cutlery",
+            "Conjunto de talher": "cutlery", "toalhas": "towel_set", "Toalhas de banho": "towel_set",
+            "Kit de toalha": "towel_set", "Jogo de toalha": "towel_set",
+            "Jogo toalha": "towel_set", "Conjunto de toalha": "towel_set",
+        }
+        for name, expected in cases.items():
+            with self.subTest(name=name):
+                self.assertEqual(match_illustration(name).key, expected)
+
+    def test_check_command_can_diagnose_names_without_accessing_the_database(self):
+        for name, key in [("jogo de talher", "cutlery"), ("toalhas", "towel_set")]:
+            with self.subTest(name=name):
+                output = io.StringIO()
+                call_command("check_illustrations", name=name, stdout=output)
+                self.assertIn(f"{len(catalog())} ilustrações locais válidas", output.getvalue())
+                self.assertIn(f"({key})", output.getvalue())
+        for name in ("Presente", "jogo de talher e toalhas", ""):
+            with self.subTest(name=name):
+                with self.assertRaisesMessage(CommandError, "Nome sem correspondência única"):
+                    call_command("check_illustrations", name=name, stdout=io.StringIO())
 
 
 class IllustrationWorkflowTests(TestCase):
@@ -136,6 +165,35 @@ class IllustrationWorkflowTests(TestCase):
         product = Product.objects.get(name="Presente")
         self.assertFalse(product.image)
         self.assertIn("Sem ilustração compatível", product.image_notice)
+
+    def test_reported_names_create_cards_with_working_images(self):
+        for name, key in [("jogo de talher", "cutlery"), ("toalhas", "towel_set")]:
+            with self.subTest(name=name):
+                self.assertEqual(self.create(name).status_code, 302)
+                product = Product.objects.get(name=name)
+                self.assertEqual(product.illustration_key, key)
+                self.assertTrue(product.has_available_image)
+                self.assertEqual(product.image_notice, "Ilustração do catálogo aplicada.")
+                image_url = reverse("product_image", args=[product.pk])
+                self.assertContains(self.client.get(reverse("panel")), image_url)
+                response = self.client.get(image_url)
+                self.assertEqual(response["Content-Type"], "image/webp")
+                self.assertTrue(b"".join(response.streaming_content).startswith(b"RIFF"))
+
+    def test_existing_missing_images_can_be_previewed_and_applied_for_reported_names(self):
+        for name, key in [("jogo de talher", "cutlery"), ("toalhas", "towel_set")]:
+            with self.subTest(name=name):
+                product = Product.objects.create(name=name, created_by=self.manager, submission_key=uuid.uuid4())
+                action = reverse("apply_illustration", args=[product.pk])
+                self.assertContains(self.client.get(reverse("panel")), f'href="{action}"')
+                self.assertEqual(product.image_notice, "Ilustração disponível no catálogo.")
+                self.assertContains(self.client.get(action), "Usar esta ilustração")
+                product.refresh_from_db()
+                self.assertFalse(product.image)
+                self.assertEqual(self.client.post(action, {"revision": product.revision}).status_code, 302)
+                product.refresh_from_db()
+                self.assertEqual(product.illustration_key, key)
+                self.assertTrue(product.has_available_image)
 
     def test_asset_unavailable_does_not_prevent_product_creation(self):
         with patch("gifts.illustrations.service.read_illustration", side_effect=OSError("private path")):
