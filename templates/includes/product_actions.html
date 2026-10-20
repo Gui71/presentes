@@ -3,5 +3,6 @@
     {% if can_edit_products %}<a id="edit-{{ product.pk }}" class="button secondary" href="{% url 'edit_product' product.pk %}">Editar</a>{% endif %}
     {% if can_delete_products %}<a id="delete-{{ product.pk }}" class="button secondary danger" href="{% url 'delete_product' product.pk %}">Excluir</a>{% endif %}
   {% endif %}
-  {% if can_edit_products and not product.has_available_image %}<form method="post" action="{% url 'retry_product_image' product.pk %}" data-loading="Buscando foto…">{% csrf_token %}<button type="submit" class="text-button">Tentar foto novamente</button></form>{% endif %}
+  <p class="form-hint">{{ product.image_notice }}</p>
+  {% if can_edit_products and product.catalog_illustration %}<a id="illustration-{{ product.pk }}" class="text-button" href="{% url 'apply_illustration' product.pk %}">{% if product.has_available_image %}Rever ilustração{% else %}Usar ilustração{% endif %}</a>{% endif %}
 </div>

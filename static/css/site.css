@@ -626,3 +626,6 @@ to {
 
 
 .selected { animation: none; }
+.illustration-caption { color: var(--muted); font-size: 1rem; margin: 0 0 16px; }
+.selected .illustration-caption { color: #333; }
+.illustration-preview { width: 100%; height: auto; max-height: 240px; object-fit: contain; }

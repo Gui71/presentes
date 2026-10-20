@@ -4,9 +4,11 @@ Consulta às referências oficiais: **20/10/2026**. Este guia prepara um deploy 
 
 ## Arquitetura e pré-requisitos
 
-`compose.yaml` contém uma réplica `app` (Django/Gunicorn, UID/GID 10001) e `proxy` (Caddy, UID/GID 10001). Só o proxy publica portas: host 80 → container 8080 e host 443 → container 8443. `app:8000` fica na rede do Compose. A rede permite saída para anúncios públicos; não há banco de rede nem docker.sock montado.
+`compose.yaml` contém uma réplica `app` (Django/Gunicorn, UID/GID 10001) e `proxy` (Caddy, UID/GID 10001). Só o proxy publica portas: host 80 → container 8080 e host 443 → container 8443. `app:8000` fica na rede do Compose. Não há banco de rede nem docker.sock montado. Ilustrações usam o catálogo local incluído no código/imagem: não precisam de rede externa, chave de IA, worker ou inferência na VM.
 
 Volumes: `app_database` guarda **o diretório inteiro** `/var/lib/presentes/db`, incluindo WAL/SHM se usados; `app_media` guarda `/var/lib/presentes/media`; `caddy_data` e `caddy_config` preservam certificados/configuração do proxy. O nome padrão do projeto é `presentes`; mantenha-o estável. Os estáticos são coletados no build e copiados para `/srv/static` na imagem do proxy. A mídia é privada e servida pelas views Django autorizadas, nunca por diretório público do Caddy.
+
+Ao aplicar uma ilustração, o servidor copia o WebP validado para o volume de mídia e guarda sua origem no banco. Imagens anteriores são preservadas até substituição explícita no painel. Atualizações do catálogo não alteram presentes existentes em massa; use Usar/Rever ilustração por item. Consulte [IMAGENS-CATALOGO.md](IMAGENS-CATALOGO.md). Verifique a instalação com `sudo docker compose run --rm --no-deps app python manage.py check_illustrations`.
 
 Docker Engine e Compose plugin atuais (Compose **2.24.4+** por causa de `!override` no teste local), Git, Python 3 para preparar configuração, disco persistente e acesso HTTPS aos registries/PyPI. Planeje pelo menos 2 GiB de RAM para build e aplicação pequena, mais espaço para imagens, banco, mídia e backups; meça sua carga. Não há promessa de gratuidade ou capacidade da OCI. SQLite fica em disco local de uma única VM/réplica; não escale a aplicação para outros servidores compartilhando esse arquivo.
 
@@ -74,7 +76,7 @@ ssh-keygen -t ed25519 -f ~/.ssh/presentes_oci
 
 Proteja a chave privada com passphrase; envie **apenas a chave pública** `.pub` à criação da VM. Ubuntu da OCI normalmente usa o usuário `ubuntu`; confira a instrução de conexão da imagem selecionada. Nos comandos seguintes, substitua `<IP_PUBLICO_OCI>`, `<CIDR_ADMINISTRATIVO>` e `<DOMINIO_REAL>` pelos valores reais; são placeholders, não valores descobertos.
 
-Revise **NSGs e todas as Security Lists** aplicadas à VNIC/subnet. Permissões se somam: um NSG restrito não neutraliza uma Security List que ainda permita SSH de qualquer origem. Permita TCP 22 somente do CIDR administrativo, TCP 80 e 443 públicos, preservando regras essenciais de retorno, ICMP/PMTU e tráfego OCI necessário. Não abra 8000, banco, daemon Docker ou portas de administração. Preserve saída DNS e HTTP/HTTPS necessária para atualizações, ACME e imagens de produtos.
+Revise **NSGs e todas as Security Lists** aplicadas à VNIC/subnet. Permissões se somam: um NSG restrito não neutraliza uma Security List que ainda permita SSH de qualquer origem. Permita TCP 22 somente do CIDR administrativo, TCP 80 e 443 públicos, preservando regras essenciais de retorno, ICMP/PMTU e tráfego OCI necessário. Não abra 8000, banco, daemon Docker ou portas de administração. Preserve saída DNS e HTTP/HTTPS necessária para atualizações e ACME. Ilustrações não exigem acesso a lojas ou APIs.
 
 ## 3. Preparar Ubuntu via SSH
 
@@ -240,7 +242,7 @@ sudo docker compose ps
 sudo docker compose logs --tail=100 app proxy
 ```
 
-Logs têm rotação de 10 MiB × 3 por serviço. Não publique `.env`, exports ou dumps de `docker compose config` com valores; use `config --quiet`. Em falha de permissão, confira UID/GID 10001 e ownership do diretório/volume correto; não amplie permissões globalmente. Em 502, confira health/migrations/logs do app. Em loop de redirect, confira topologia do proxy e HTTPS. Em falha ACME, confira DNS/AAAA, 80/443, NSGs/Security Lists/firewall e certificados persistentes. Em foto ausente, diferencie aviso de extração, arquivo ausente, DNS/egress, CAPTCHA/403 e rota de mídia autorizada; use “Tentar foto novamente” com permissão de alteração. Não contorne controles da loja nem reduza SSRF/TLS.
+Logs têm rotação de 10 MiB × 3 por serviço. Não publique `.env`, exports ou dumps de `docker compose config` com valores; use `config --quiet`. Em falha de permissão, confira UID/GID 10001 e ownership do diretório/volume correto; não amplie permissões globalmente. Em 502, confira health/migrations/logs do app. Em loop de redirect, confira topologia do proxy e HTTPS. Em falha ACME, confira DNS/AAAA, 80/443, NSGs/Security Lists/firewall e certificados persistentes. Em imagem ausente, confira o nome reconhecido no catálogo, `check_illustrations`, arquivo no volume e rota de mídia autorizada; use Usar/Rever ilustração com permissão de alteração. O site não faz extração de anúncios nem geração por API. Novos objetos exigem atualização manual do catálogo; falhas de DNS de lojas não afetam esse fluxo.
 
 Rollback exige compatibilidade entre código e estado do banco. Não execute migrações reversas ou restaure snapshot cegamente: confirme o plano da alteração. Se for preciso restaurar, use o procedimento em volumes novos e considere as escritas feitas desde o backup. Mantenha o commit/imagens anteriores até validar a nova versão; não reescreva histórico Git.
 

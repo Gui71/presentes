@@ -1,9 +1,7 @@
-from functools import partial
 import logging
 
 from django.db import transaction
 from django.db.models import F
-from django.core.files.base import ContentFile
 from PIL import Image
 
 from .models import Product, ProductLink, Selection
@@ -33,34 +31,23 @@ def valid_stored_image(field):
         return False
 
 
-def update_product(pk, revision, name, urls, photo, refresh_photo):
-    new_file = None
-    try:
-        with transaction.atomic():
-            # A primeira escrita serializa edição, exclusão e confirmação inclusive no SQLite.
-            if not Product.objects.filter(pk=pk, revision=revision).update(revision=F("revision") + 1):
-                raise ProductConflict("O item mudou. Atualize o painel antes de editar.")
-            product = Product.objects.get(pk=pk)
-            if Selection.objects.filter(product=product).exists():
-                raise ProductConflict("Cancele a escolha antes de editar este presente.")
-            old_name, storage = product.image.name, product.image.storage
-            product.name = name
-            ProductLink.objects.filter(product=product).delete()
-            ProductLink.objects.bulk_create([ProductLink(product=product, url=url, position=index) for index, url in enumerate(urls)])
-            if refresh_photo:
-                if photo:
-                    product.image.save("product.webp", ContentFile(photo), save=False)
-                    new_file = (storage, product.image.name)
-                elif not valid_stored_image(product.image):
-                    product.image = ""
-            product.save()
-            if old_name and old_name != product.image.name:
-                transaction.on_commit(partial(remove_unused_image, storage, old_name))
-            return product
-    except Exception:
-        if new_file:
-            new_file[0].delete(new_file[1])
-        raise
+def update_product(pk, revision, name, urls):
+    with transaction.atomic():
+        # A primeira escrita serializa edição, exclusão e confirmação inclusive no SQLite.
+        if not Product.objects.filter(pk=pk, revision=revision).update(revision=F("revision") + 1):
+            raise ProductConflict("O item mudou. Atualize o painel antes de editar.")
+        product = Product.objects.get(pk=pk)
+        if Selection.objects.filter(product=product).exists():
+            raise ProductConflict("Cancele a escolha antes de editar este presente.")
+        product.name = name
+        ProductLink.objects.filter(product=product).delete()
+        ProductLink.objects.bulk_create([
+            ProductLink(product=product, url=url, position=index)
+            for index, url in enumerate(urls)
+        ])
+        # Alterar nome/links não substitui uma imagem existente sem confirmação.
+        product.save(update_fields=["name"])
+        return product
 
 
 def delete_product(pk, revision):

@@ -33,7 +33,7 @@ document.querySelectorAll("form[data-loading]").forEach(form => form.addEventLis
   const button = form.querySelector('button[type="submit"]');
   if (button) { button.disabled = true; button.textContent = form.dataset.loading; }
   const status = form.querySelector(".form-status");
-  if (status) status.textContent = "O cadastro pode levar alguns segundos enquanto buscamos a foto.";
+  if (status) status.textContent = "Salvando as alterações…";
   form.setAttribute("aria-busy", "true");
 }));
 const addLink = document.getElementById("add-link");

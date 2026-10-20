@@ -1,0 +1,670 @@
+{
+  "generated_on": "2026-10-20",
+  "source": "OpenAI image generation tool in this conversation; no runtime generation API",
+  "illustrations": [
+    {
+      "key": "cutlery",
+      "label": "Talheres",
+      "aliases": [
+        "faqueiro",
+        "talheres"
+      ],
+      "exclude": [
+        "porta talheres"
+      ],
+      "prompt": "A generic stainless-steel flatware set, forks, table knives and tablespoons.",
+      "sha256": "a7a75d72faf7328e2c9ffa100f87f6e3e045dda4ab200fb8e0fe4c7fc5ef23c9",
+      "source_png": "exec-014d0578-b1e8-49b0-85c3-16d7d5a1d131.png",
+      "source_sha256": "f8f7654c306987c6b0efe8b63fd832e62d455c1d94bae6b443a54bc084652377"
+    },
+    {
+      "key": "towel_set",
+      "label": "Kit de toalhas",
+      "aliases": [
+        "kit toalha",
+        "kit toalhas",
+        "kit de toalhas",
+        "jogo de toalhas",
+        "jogo toalhas",
+        "conjunto de toalhas"
+      ],
+      "exclude": [
+        "mesa",
+        "praia",
+        "piscina",
+        "boca"
+      ],
+      "prompt": "A folded ivory cotton bath and face towel set.",
+      "sha256": "dcfea43598ecb8b97250d6bfee95a2409b5518b35f36251e6410581a515dca4a",
+      "source_png": "exec-de66f990-83e6-42e4-8987-ebd55cf6bc2f.png",
+      "source_sha256": "601a41115100816a0966509e88f1168b7bbb1782cb837681a2ef956830b6c460"
+    },
+    {
+      "key": "dinnerware_set",
+      "label": "Pratos",
+      "aliases": [
+        "pratos",
+        "aparelho de jantar"
+      ],
+      "exclude": [
+        "porta pratos",
+        "escorredor de pratos"
+      ],
+      "prompt": "A plain ivory ceramic set of dinner plates, side plates and bowls.",
+      "sha256": "f20d97e48a70a6e8cd63fbbe03793cede5aae656b621d73428209291ec36d0ad",
+      "source_png": "exec-7d59438f-75d1-4399-b7c7-e58c5cb9c3a5.png",
+      "source_sha256": "2097cb8cee89e752158782363f77b760bb4783aea18b76cf15e016d9d3f4798c"
+    },
+    {
+      "key": "drinking_glasses",
+      "label": "Copos",
+      "aliases": [
+        "copos"
+      ],
+      "exclude": [
+        "porta copos",
+        "liquidificador"
+      ],
+      "prompt": "A matching set of simple clear cylindrical drinking glasses.",
+      "sha256": "702aec665ed5996126b83a50b46e103d3f8a7f5ffc90066fafe65c1af7d95d62",
+      "source_png": "exec-1f85b469-1cf6-493a-82d8-d8827bde6c01.png",
+      "source_sha256": "c1bfb8dbc55079274a9c6fbbd9268b78cacb9778374fadf2d8dde71fadaa45d1"
+    },
+    {
+      "key": "electric_kettle",
+      "label": "Chaleira elétrica",
+      "aliases": [
+        "chaleira eletrica"
+      ],
+      "exclude": [],
+      "prompt": "A simple stainless steel and ivory electric kettle on its base.",
+      "sha256": "2af33d78507b1f5b40f325ccd2f58491a338b1685c0f61686b98b1fa22b47d39",
+      "source_png": "exec-1bca0ae2-c666-4347-a00d-4c0d5ef7c520.png",
+      "source_sha256": "4ff5275cdadd531e852801ea1b3ffe66cdac5184c86a7fb00103ac3f0cb1b62b"
+    },
+    {
+      "key": "blender",
+      "label": "Liquidificador",
+      "aliases": [
+        "liquidificador"
+      ],
+      "exclude": [
+        "copo para",
+        "copo de",
+        "jarra para",
+        "jarra de",
+        "tampa para",
+        "lamina para"
+      ],
+      "prompt": "A simple ivory countertop blender with a clear glass pitcher.",
+      "sha256": "67130f67bbabf593e44697e1ac78b3f98f4184b624aebffb71f8e8bfbc09f0af",
+      "source_png": "exec-3f21497d-ca52-44d1-be0e-4bb55ebcc61d.png",
+      "source_sha256": "545471638c675fe31a317386755075ff3dd32ee5e91e7d8e566a74c16be61055"
+    },
+    {
+      "key": "cookware_black",
+      "label": "Kit de panelas",
+      "aliases": [
+        "kit panelas",
+        "kit de panelas",
+        "jogo de panelas",
+        "conjunto de panelas",
+        "conjunto panelas"
+      ],
+      "exclude": [],
+      "prompt": "A black nonstick cooking-pot set with glass lids and black insulated handles.",
+      "sha256": "81bb3e4a4c7caf37e32d0e7e200fcdc138ce47d22e2e4b059dfcd1a71f445dfd",
+      "source_png": "exec-b1dabde9-057b-498f-b8a8-ea8f291d7872.png",
+      "source_sha256": "fffdf259382bd0b74873c04e36f2ae7ee5cba8d00ad4a71731c4f91012a5e3bd"
+    },
+    {
+      "key": "frying_pan",
+      "label": "Frigideira",
+      "aliases": [
+        "frigideira"
+      ],
+      "exclude": [
+        "cabo de",
+        "tampa para"
+      ],
+      "prompt": "One black nonstick frying pan with a black insulated handle.",
+      "sha256": "dbbe7c25549957950eb71a59f595682ff04091fb9e41a1682684c35c67f01261",
+      "source_png": "exec-96b80b4c-3803-4237-9d84-d4716f1090ee.png",
+      "source_sha256": "b2188f6439a99d55e6f06bdc1a538dea1202533d739540c59839d78ff9a59478"
+    },
+    {
+      "key": "milk_pan",
+      "label": "Leiteira",
+      "aliases": [
+        "leiteira"
+      ],
+      "exclude": [],
+      "prompt": "One black nonstick milk saucepan with a pouring lip and black handle.",
+      "sha256": "9e084adf65c6bc69c538f3d9a62d6bb2b444c94a28ba3717a39b0c68c4a57f51",
+      "source_png": "exec-1059eaab-ec1a-4904-b63e-ca79ea23a9ca.png",
+      "source_sha256": "3629e4795263a05a7a35f835c8adcd02ca266863faf85d0727761e9e2f59d440"
+    },
+    {
+      "key": "popcorn_pan",
+      "label": "Pipoqueira",
+      "aliases": [
+        "pipoqueira",
+        "panela de pipoca",
+        "panela para pipoca"
+      ],
+      "exclude": [
+        "eletrica"
+      ],
+      "prompt": "One black stovetop popcorn pot with a manual stirring crank.",
+      "sha256": "72bd0a002f086dd869b5c16c7559ec8fc6f4c219e458726d16360fb7c175d083",
+      "source_png": "exec-0d06491f-ca33-4d5c-8a21-e5ec5f5f7b6c.png",
+      "source_sha256": "0b447f1172aa7a630dacb5d9b80c0e28a7c73764cb4dc820583b820026fb8ffd"
+    },
+    {
+      "key": "kitchen_utensils",
+      "label": "Kit de utensílios",
+      "aliases": [
+        "kit utensilios",
+        "kit de utensilios",
+        "jogo de utensilios",
+        "conjunto de utensilios"
+      ],
+      "exclude": [],
+      "prompt": "A set of black silicone cooking utensils with wooden handles.",
+      "sha256": "bf2a2f6b0400733fe8bd1e2c779aaee99f0a2f3a73b0da958d04ffebdba3bbb5",
+      "source_png": "exec-38ee3885-65ff-45d9-8475-ca1662da1a03.png",
+      "source_sha256": "c874283d405f064611b6ee0a4f48e6166c139748d906774d8610f8982f9e5e47"
+    },
+    {
+      "key": "knife_set",
+      "label": "Kit de facas",
+      "aliases": [
+        "kit facas",
+        "kit de facas",
+        "jogo de facas",
+        "conjunto de facas"
+      ],
+      "exclude": [],
+      "prompt": "A small stainless steel kitchen knife set with black handles.",
+      "sha256": "8d2227f08a7ab76247e96fbbdb599e0f67d07afe31f8ec17fa7329c62294e58d",
+      "source_png": "exec-ff3f5da0-689e-444f-9454-4bb1a3adb92b.png",
+      "source_sha256": "5d690c00712d0d8364f5fc102d9ae85ec53157f225d6be74ac100f6def1201d4"
+    },
+    {
+      "key": "round_casserole",
+      "label": "Refratário redondo com tampa",
+      "aliases": [
+        "pirex redondo",
+        "refratario redondo"
+      ],
+      "exclude": [],
+      "prompt": "One round clear glass oven-safe casserole bowl with its matching transparent lid, plain and empty.",
+      "sha256": "43c1f41bd7075454d31dd4399d56adc4f3b2b2a235d27c642c7fa395eb55fe0c",
+      "source_png": "exec-7d174c0c-7df3-4c88-88c2-3f376831fbf7.png",
+      "source_sha256": "82a2a70fac5cd57038be2ba70017ac366b45ee1310cc1c7f96dd146a3088ab02"
+    },
+    {
+      "key": "rectangular_casserole",
+      "label": "Refratário retangular",
+      "aliases": [
+        "pirex retangular",
+        "refratario retangular"
+      ],
+      "exclude": [],
+      "prompt": "One rectangular clear glass oven-safe baking dish with two small integrated side handles, no lid, empty.",
+      "sha256": "e6fe1cef2099fb8ed9ee1e361543004579a8a1c36a970fcfc01e2c9e8f60d9d6",
+      "source_png": "exec-69e99ea1-f30e-4188-a23c-77150dcad3bd.png",
+      "source_sha256": "e551978c353dc9349122975bef028710c9fbca17ff4d3a55c7fbcda343974e5f"
+    },
+    {
+      "key": "cake_pan",
+      "label": "Forma de bolo",
+      "aliases": [
+        "forma de bolo",
+        "forma bolo"
+      ],
+      "exclude": [],
+      "prompt": "One simple dark metal round cake pan with a central tube, empty, slightly angled to show the inside.",
+      "sha256": "6746047c76631205f538ce213da2d04edf11cc5d5f25e0ae3198427e61a4412c",
+      "source_png": "exec-36537a6f-6cc2-4924-97e1-4ae85bc21fdb.png",
+      "source_sha256": "728167ac34a751020036aa0a7a1ca329bedfcb97f37e82d629cbe93364e8e95f"
+    },
+    {
+      "key": "pizza_pan",
+      "label": "Forma de pizza",
+      "aliases": [
+        "forma de pizza",
+        "forma pizza"
+      ],
+      "exclude": [],
+      "prompt": "One plain round shallow dark metal pizza baking tray, empty, with a low rim. No holes, no pizza.",
+      "sha256": "8dda648b7209bfce85380f161885d5609d51c2b9d207e41e5e50b48ce65e2b77",
+      "source_png": "exec-b4269a6f-a89c-487b-84a5-3de7036a3f2d.png",
+      "source_sha256": "4ebc663608d4889af90bee728728df95abf9b9faeade65ce170e8bd13cd91552"
+    },
+    {
+      "key": "salt_cellar",
+      "label": "Saleiro",
+      "aliases": [
+        "saleiro"
+      ],
+      "exclude": [],
+      "prompt": "One simple ivory ceramic salt cellar with a small matching lid placed beside it. No spoon, no lettering, no visible salt.",
+      "sha256": "ea534a4e993e6fe44be75892b95d8675cc2a92d1d001f4e8e6cceedb1ef37c8f",
+      "source_png": "exec-271baff7-1037-4b03-a68e-645c003c083e.png",
+      "source_sha256": "488e717ebe7edd1c2e264aff0732c1983579d773334cbe7dfd86fb78c989f000"
+    },
+    {
+      "key": "sugar_bowl",
+      "label": "Açucareiro",
+      "aliases": [
+        "acucareiro"
+      ],
+      "exclude": [],
+      "prompt": "One simple ivory ceramic sugar bowl with a small matching lid and two tiny side handles. No spoon, no sugar, no markings.",
+      "sha256": "f78527c8bf1e19d39e0819bce9e2d58a8f86132b1b4cfc11e466e4fdcb503e26",
+      "source_png": "exec-9ab21632-eaee-41bc-92de-4767475ca238.png",
+      "source_sha256": "c6b6ca75de1b53b5d002dcc583a59b14e9290cd251c40561d3c73c795610120a"
+    },
+    {
+      "key": "cutting_board",
+      "label": "Tábua de corte",
+      "aliases": [
+        "tabua de carne",
+        "tabua de corte"
+      ],
+      "exclude": [],
+      "prompt": "One simple rectangular light wood kitchen cutting board with rounded corners, lying at a gentle angle. No knife, no food.",
+      "sha256": "f5ee79564fb4fdb57e17e8f1523daee3ace276bfe624bbb685624accb93e4436",
+      "source_png": "exec-4efcd13c-6ced-404a-873b-9fe0dfb059b2.png",
+      "source_sha256": "6250c9d1a739a5b5b7602dcf93daf460d8b5ce8ec1f9ee28c31fc934c5d9a2cd"
+    },
+    {
+      "key": "floor_cloths",
+      "label": "Panos de chão",
+      "aliases": [
+        "panos de chao",
+        "pano de chao"
+      ],
+      "exclude": [],
+      "prompt": "A tidy folded stack of five plain light gray cotton floor cleaning cloths, with simple visible weave. No tools or props.",
+      "sha256": "70dcbc7638af85e06964968c9bc36404475109f199c862e00912fd5da5b22876",
+      "source_png": "exec-afb22fa9-583c-4747-89d4-d80cc30322aa.png",
+      "source_sha256": "272d4003778131fa50c34e80397c43876706a591ecef894d050fea4273478e04"
+    },
+    {
+      "key": "dish_towels",
+      "label": "Panos de prato",
+      "aliases": [
+        "panos de prato",
+        "pano de prato"
+      ],
+      "exclude": [],
+      "prompt": "A tidy folded stack of four white cotton kitchen dish towels with very subtle gray edge stripes. No utensils, no printed words.",
+      "sha256": "0bf4d455dbfa7a9252690a41b1ec8702cd39ecef394447df56cec787dd70cfc3",
+      "source_png": "exec-7f34210a-31c9-4d53-9846-354f815c5689.png",
+      "source_sha256": "900b44e4e57d5ca681ed3b4c28eaf4fb2c014fedf19ef495f37d658b20509517"
+    },
+    {
+      "key": "clothespins",
+      "label": "Prendedores de roupas",
+      "aliases": [
+        "prendedor de roupas",
+        "prendedores de roupas",
+        "prendedor de roupa",
+        "prendedores de roupa"
+      ],
+      "exclude": [],
+      "prompt": "A small neat group of simple gray plastic spring clothespins, completely visible, arranged loosely on the background. No clothesline, no fabric.",
+      "sha256": "10969a35b93017f6cc4cf0f80acb7827dd95756611d031ea764f394232bad471",
+      "source_png": "exec-da424013-cc58-46f6-a56c-d30393f9d7c4.png",
+      "source_sha256": "584efe7c7cbcc8e957896595d7a385b11c817a9cab265a157fb224a7ad148775"
+    },
+    {
+      "key": "buckets",
+      "label": "Baldes",
+      "aliases": [
+        "balde",
+        "baldes"
+      ],
+      "exclude": [
+        "pipoca"
+      ],
+      "prompt": "Two simple gray household plastic buckets with their own swing handles, one slightly smaller, standing next to each other, empty.",
+      "sha256": "9846e266a948be8339c6f170dac3daf058625c56f17eb309c5825c13eec0f77e",
+      "source_png": "exec-798840be-f84b-4695-a38b-177bbd110f24.png",
+      "source_sha256": "e3c00875b9d06795f8ebc9f9506609df07bca43c3b779a8180039fecc360683d"
+    },
+    {
+      "key": "dustpan",
+      "label": "Pá de lixo",
+      "aliases": [
+        "pa de lixo",
+        "pazinha de lixo"
+      ],
+      "exclude": [],
+      "prompt": "One simple gray household dustpan with a short handle, empty. No broom, no dirt.",
+      "sha256": "815ce7d8402c822af16258019d160858a6ae38fb3baf7b097ec0f6e1c3a7f2fe",
+      "source_png": "exec-c97abd0f-c044-49d8-bf10-dd40ec005d5b.png",
+      "source_sha256": "28beda82a92f6e46ecf2f57b2871ae4560e20b5670f1ffd3611ac363159e2fa8"
+    },
+    {
+      "key": "sink_squeegee",
+      "label": "Rodinho de pia",
+      "aliases": [
+        "rodinho de pia",
+        "rodo de pia"
+      ],
+      "exclude": [],
+      "prompt": "One small gray kitchen sink squeegee, short handle and horizontal rubber blade, fully visible. No sink, no water.",
+      "sha256": "b954f73269c0dae6907a9bce001a73bff59ca4c7306a949c698f3d11277a167f",
+      "source_png": "exec-4f58352b-6cf2-4378-9630-943b1f73220f.png",
+      "source_sha256": "34a4ca8d6fa88dc45bae27485ed8e4bcddb03f0c8e816a86296223bb019aa4c7"
+    },
+    {
+      "key": "laundry_basket",
+      "label": "Cesto de roupas",
+      "aliases": [
+        "cesto de roupas",
+        "cesto de roupa"
+      ],
+      "exclude": [],
+      "prompt": "One plain medium gray ventilated plastic laundry basket with side handles, no lid, empty. No clothing.",
+      "sha256": "b835ff01fa4ef1357492760ed73886620a7cba31cc1d417d42967cf482b295be",
+      "source_png": "exec-9b1d6fa0-cc46-4760-b544-11e63061f96b.png",
+      "source_sha256": "3e80c614c545ca542b7157884d88cbedd10c9ff0431353c34af2c078c4f2e555"
+    },
+    {
+      "key": "wash_basins",
+      "label": "Bacias",
+      "aliases": [
+        "bacia",
+        "bacias"
+      ],
+      "exclude": [],
+      "prompt": "Two nested plain round light gray household plastic wash basins, shallow with a simple rim, empty.",
+      "sha256": "198650fe2c624e15f3000608e87e6b9e44d302a1a668eadc1411ac2283f7b8b8",
+      "source_png": "exec-f144cd22-a331-4049-8206-5b753c8236ba.png",
+      "source_sha256": "88efa5c40be8feb5b989caa7d10080be7663539af217dce2b83194c9bddd8325"
+    },
+    {
+      "key": "plastic_containers",
+      "label": "Potes de plástico",
+      "aliases": [
+        "potes de plastico",
+        "potes plasticos"
+      ],
+      "exclude": [],
+      "prompt": "A small neat set of rectangular clear plastic food storage containers with plain ivory lids, some stacked, empty. No labels.",
+      "sha256": "8fbaa3223a57eaa51c218d57c378ba575338b41f1ec16dd8043f9f241ecf2df8",
+      "source_png": "exec-73ecb437-e31a-4124-934f-d56ba5cc192b.png",
+      "source_sha256": "3d96c206b8e23c62719087e90a6386cf4ad5435206eeeeadf944de8d07248ec1"
+    },
+    {
+      "key": "pantry_containers",
+      "label": "Potes herméticos para mantimentos",
+      "aliases": [
+        "potes hermeticos",
+        "potes para mantimentos"
+      ],
+      "exclude": [
+        "vidro",
+        "borossilicato"
+      ],
+      "prompt": "A small coordinated set of tall clear pantry storage canisters for dry foods, different heights, plain ivory airtight lids, empty. No food, no labels.",
+      "sha256": "b35d13f87a8a8a4c8bec180621c700e91ecaf310bcd32f5dcf44ff6c999470ac",
+      "source_png": "exec-528a4bdd-7084-43fb-a847-e306a65f7541.png",
+      "source_sha256": "ebc76609198908359c5c7d2635823bcb0f9d1333c9f0a86a1b8d1dd1fef1d6f7"
+    },
+    {
+      "key": "glass_containers",
+      "label": "Potes de vidro",
+      "aliases": [
+        "potes de vidro",
+        "potes vidro",
+        "potes borossilicato"
+      ],
+      "exclude": [],
+      "prompt": "A small set of transparent rectangular glass food storage containers with plain gray locking lids, empty, arranged neatly. No food, no labels.",
+      "sha256": "00b5bd736c471883b4aebca4848e6003baced63b596cf012e326aa7be055375a",
+      "source_png": "exec-2b2c73fc-f165-486b-bb05-29e3fc05d71c.png",
+      "source_sha256": "62ca53cb4aa2eb6441336a1acb3870fe7d8b4a1ff0ad4de05a9101b6aa33e729"
+    },
+    {
+      "key": "popcorn_bowl",
+      "label": "Pote para pipoca",
+      "aliases": [
+        "pote grande para pipoca",
+        "pote para pipoca",
+        "pote de pipoca"
+      ],
+      "exclude": [],
+      "prompt": "One large plain ivory plastic serving bowl suitable for popcorn, rounded and open, empty. No popcorn, no printed motifs.",
+      "sha256": "660a876d9531855073f164c20f1eb4728738bddb1aeb1cc0f8fb6914c58087f3",
+      "source_png": "exec-67aaaf86-118b-410c-a367-9bee31daab8b.png",
+      "source_sha256": "d2d74d1438b91574baba3fce8c8f73a41211a210db4b233831e52b0fcc9549ba"
+    },
+    {
+      "key": "detergent_holder",
+      "label": "Porta detergente",
+      "aliases": [
+        "porta detergente"
+      ],
+      "exclude": [],
+      "prompt": "One simple neutral gray kitchen sink organizer with a refillable plain soap pump bottle and an empty sponge compartment. No sponge, no text.",
+      "sha256": "4b6c2151767781afaca5d2ff7a5c105983e06e779d6eee610ced55b5cc20b189",
+      "source_png": "exec-a1c1cca4-7aa2-40ab-b3ea-2334e0219fab.png",
+      "source_sha256": "334ab51f7a8284f91010b8990c7ba23d3a4775d7192280e7f28dea8254f8cd98"
+    },
+    {
+      "key": "pitcher",
+      "label": "Jarra",
+      "aliases": [
+        "jarra de suco",
+        "jarra para suco",
+        "jarra de agua",
+        "jarra para agua",
+        "jarras para agua",
+        "jarras de agua"
+      ],
+      "exclude": [],
+      "prompt": "One plain transparent glass water or juice pitcher with a handle and simple pouring spout, empty, no lid, fully visible. No glasses or fruit.",
+      "sha256": "b52ac8d1a4e661cea9c6f39a05fc0876ad9b5639df179262c9542337c9055e8d",
+      "source_png": "exec-82e6ddf3-708b-4c69-a7dc-d7621adab251.png",
+      "source_sha256": "568d37a22611e7a47c16ff899ae9b4136258056dc2493f9b30337e427301f2aa"
+    },
+    {
+      "key": "kitchen_scissors",
+      "label": "Tesoura de cozinha",
+      "aliases": [
+        "tesoura de cozinha"
+      ],
+      "exclude": [],
+      "prompt": "One pair of simple kitchen scissors with short stainless blades and black ergonomic finger loops, closed, completely visible. No other tools.",
+      "sha256": "6841192e15abba05b4a7f39a700c29fbbb7c15e3628c442ecc4943f6a22115b5",
+      "source_png": "exec-726dd60e-e7de-4d5b-b345-27dabcde0a45.png",
+      "source_sha256": "f1e133af4ebd04980510ef9339effabfea78f83f06292cb1ae87a586bbb0932c"
+    },
+    {
+      "key": "colander",
+      "label": "Escorredor de macarrão",
+      "aliases": [
+        "escorredor de macarrao"
+      ],
+      "exclude": [],
+      "prompt": "One simple stainless steel kitchen colander with two small side handles and a stable foot, empty, fully visible. No pasta.",
+      "sha256": "cdccd87a8f02594fc688ca81f5abedbc64f7eecda6585d52c674aa66d87c3111",
+      "source_png": "exec-8fed7527-2501-464e-b83c-cbdb28083868.png",
+      "source_sha256": "3406026f2de7c13308559b1509252a1cd20d48b7fe022a2657c768aebcbd7199"
+    },
+    {
+      "key": "spice_rack",
+      "label": "Porta temperos",
+      "aliases": [
+        "porta temperos",
+        "porta tempero"
+      ],
+      "exclude": [],
+      "prompt": "A simple compact spice organizer with a small plain wooden rack holding six small clear glass spice jars with gray caps, empty. No labels, no spices.",
+      "sha256": "adfa8f6e908c9ef2b78c5d3135b30600b1daf557a78e6148611d051cda1eabb3",
+      "source_png": "exec-e6444b7c-3498-492e-8eab-d35926226516.png",
+      "source_sha256": "01ee7e4be72c3c93a2a01a543d60b69e584fd43a88699170f36e88c3019939f1"
+    },
+    {
+      "key": "dessert_bowls",
+      "label": "Potes de sobremesa",
+      "aliases": [
+        "potes de sobremesa",
+        "pote de sobremesa",
+        "tigelas de sobremesa"
+      ],
+      "exclude": [],
+      "prompt": "A neat small set of clear glass dessert bowls, shallow and round, empty, some nested and one separate. No desserts or spoons.",
+      "sha256": "c70bcd1967147752d0124940d18d971d2db20c1ee6f86b9e2ad9a95fdd11f481",
+      "source_png": "exec-d754f3c8-46e9-496c-80f3-7de8e9529af3.png",
+      "source_sha256": "d9a7f85df36751bb43415ea8dd9e1aa8bd1ed3cc07c21eba828892feab1eaa70"
+    },
+    {
+      "key": "soap_dish",
+      "label": "Porta sabonete",
+      "aliases": [
+        "porta sabonete"
+      ],
+      "exclude": [],
+      "prompt": "One plain ivory ceramic bathroom soap dish with subtle drainage grooves, empty. No bar of soap, no bathroom setting.",
+      "sha256": "f7b133f33c068703439fcd41405d8f9cf8f584d88ee79d9ad257a1dbed570670",
+      "source_png": "exec-8c394a33-4bb4-4f33-ac86-7ab3dc201593.png",
+      "source_sha256": "dba6d5e79239ae6e903e4745a44969018a1d974076dc7535e2fa5589d23e88fc"
+    },
+    {
+      "key": "waste_bin",
+      "label": "Lixeira",
+      "aliases": [
+        "lixeira"
+      ],
+      "exclude": [],
+      "prompt": "One simple medium gray household pedal waste bin with its lid closed and a small plain black foot pedal, no branding, fully visible. No trash or bags.",
+      "sha256": "57fff8e736556ccb44009e8c69d1f0a59c027e3f985489e37e546caed4849439",
+      "source_png": "exec-3f4e41e8-8d4f-4bd8-8b76-36e3a3d0559d.png",
+      "source_sha256": "b151d7bea0086216312a9f9a8ba7a7f597bdc54ec79a028f0b5086fb0ea81d4e"
+    },
+    {
+      "key": "bedding_set",
+      "label": "Jogo de roupa de cama",
+      "aliases": [
+        "jogo roupa de cama",
+        "jogo de roupa de cama",
+        "jogo de cama",
+        "jogo de lencois"
+      ],
+      "exclude": [
+        "berco",
+        "bebe"
+      ],
+      "prompt": "A neatly folded set of plain ivory bed sheets with two matching pillowcases, stacked and fully visible. Only folded fabric, no bed, pillows or mattress.",
+      "sha256": "0e77d77f33234873e101d2a3298a7e4d330a235dc92b45d53c639d82169bea8d",
+      "source_png": "exec-31b396b3-717b-4844-88ae-eaf717cc0f88.png",
+      "source_sha256": "253f4ae0653aa6dceade1c3c0c5dad24424c460c7955f7cf7bead46c54588f86"
+    },
+    {
+      "key": "bath_mats",
+      "label": "Tapetes de banheiro",
+      "aliases": [
+        "tapetes banheiro",
+        "tapetes de banheiro",
+        "tapete de banheiro",
+        "kit tapetes banheiro"
+      ],
+      "exclude": [],
+      "prompt": "A simple matching bathroom mat set: one rectangular gray soft bath mat and one smaller gray contoured toilet-base mat, neatly separated and fully visible. No bathroom fixtures.",
+      "sha256": "b6a7ade25c3c3c56c8a4b42d47a4df96908a2d32e9a433e35ea1ce29a2a90d3b",
+      "source_png": "exec-bea1b573-dfaf-4aa6-90f0-e155df9613e0.png",
+      "source_sha256": "e7976b34b6eca8aaaac7988a567c5d755561f170285b491974ca4c41c541b9fb"
+    },
+    {
+      "key": "stand_mixer",
+      "label": "Batedeira",
+      "aliases": [
+        "batedeira"
+      ],
+      "exclude": [
+        "tigela para",
+        "batedor para"
+      ],
+      "prompt": "One compact unbranded ivory electric stand mixer with a plain stainless mixing bowl and beaters, no attachments beyond its standard beaters, no food.",
+      "sha256": "8ca6042c2db3b1f29fbc8f0c2e23d2e23288728acd0bf448fe0a7a83884a8774",
+      "source_png": "exec-96423aed-9766-4940-959e-d54ab3d45505.png",
+      "source_sha256": "03918f19c2bd10fe1402530f7dc469d5b45547f73847ed882028c43eb63843fd"
+    },
+    {
+      "key": "coffee_maker",
+      "label": "Cafeteira",
+      "aliases": [
+        "cafeteira"
+      ],
+      "exclude": [
+        "capsulas",
+        "capsula",
+        "italiana",
+        "filtro para",
+        "jarra para"
+      ],
+      "prompt": "One plain ivory electric drip coffee maker with a transparent glass carafe, simple controls without text. No capsules, no coffee, no cups.",
+      "sha256": "384802eb75abbaa1e04fbedb948db961683ca8d3aa1aaf09acfbedfb4d2c33e3",
+      "source_png": "exec-87805296-e37f-44b8-8794-ff57fa2fadda.png",
+      "source_sha256": "a4cf16ee4de006b142ceffacb8026f96c233a141dfd09b8fd2c7a75c7ea00aa9"
+    },
+    {
+      "key": "mini_processor",
+      "label": "Mini processador",
+      "aliases": [
+        "mini processador",
+        "miniprocessador"
+      ],
+      "exclude": [],
+      "prompt": "One compact electric mini food chopper with a small clear bowl, plain ivory lid and simple ivory motor top, empty, fully visible. No food or extra accessories.",
+      "sha256": "1e12c06ea06266001fa81549d66f1a9ce84e4fc08f27aa0ff4934bf8f88db991",
+      "source_png": "exec-97aa9cf7-6045-4b17-9159-53ac5a787ecd.png",
+      "source_sha256": "ab8bd0de94b534f75499f8de11d4d6ded70c2492d62bd2aa24de100815979ec7"
+    },
+    {
+      "key": "sandwich_maker",
+      "label": "Sanduicheira",
+      "aliases": [
+        "sanduicheira"
+      ],
+      "exclude": [],
+      "prompt": "One compact plain black electric sandwich press, slightly open to reveal the two dark triangular nonstick cooking plates, no text. No bread or sandwiches.",
+      "sha256": "e9eabc095646d5a5518fe998209e068421e969abfbcb162b8063ab8ab6256a88",
+      "source_png": "exec-1c2c6299-6353-4f16-9645-7e620731030b.png",
+      "source_sha256": "7138fc84b8533ff1a18415336ddeba37781d1c40e972273e6924d1d1d257b128"
+    },
+    {
+      "key": "clothes_iron",
+      "label": "Ferro de passar",
+      "aliases": [
+        "ferro de passar"
+      ],
+      "exclude": [],
+      "prompt": "One simple ivory and light gray electric steam iron standing at a gentle angle so the soleplate is partially visible. No ironing board, no clothing, no text or brand.",
+      "sha256": "c73d26d69686cc9ae9f5f6beb7622a46fba00de11de66c897f80ed15c7a8a4a3",
+      "source_png": "exec-bf77aabe-9c86-4323-8a00-dc68e17b54d7.png",
+      "source_sha256": "72f8f32f369f3a53c3367c8ccc70b3b297db331061405e5b79c6a88d62aab35a"
+    },
+    {
+      "key": "waffle_maker",
+      "label": "Mini máquina de waffle",
+      "aliases": [
+        "maquina de waffle",
+        "mini maquina de waffle",
+        "maquina de waffles",
+        "mini maquina de waffles"
+      ],
+      "exclude": [],
+      "prompt": "One small compact round black electric waffle maker, open so its round waffle-grid cooking plates are visible. No waffles, no batter, no text.",
+      "sha256": "e04cbbcab05f5170115b3efcef10dabf0a86d14e5e876c2d1f1ba0c49287fe18",
+      "source_png": "exec-fa09eba7-75d5-4a1f-ade5-4fc032e701b6.png",
+      "source_sha256": "f1fe5b7ff482889ce8feaabd6761d51cd8796f6e3c3608bdbf6c261f02f24586"
+    }
+  ]
+}

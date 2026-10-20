@@ -59,7 +59,7 @@ class ManagementTests(TestCase):
         self.assertContains(other.get('/'),'https://shop.example/first')
         self.assertContains(other.get('/'),'https://shop.example/second')
 
-    @patch('gifts.views.obtain_product_image',return_value=None)
+    @patch('gifts.external.obtain_product_image')
     def test_edit_prefills_modal_updates_order_and_preserves_creator(self, obtain):
         url=reverse('edit_product',args=[self.product.pk])
         page=self.client.get(url)
@@ -70,7 +70,7 @@ class ManagementTests(TestCase):
         self.assertEqual(self.product.name,'Panela atualizada')
         self.assertEqual(self.product.created_by,self.user)
         self.assertEqual(list(self.product.links.values_list('url',flat=True)),['https://new.example/first','https://new.example/second'])
-        self.assertEqual(obtain.call_args.args[0],['https://new.example/first','https://new.example/second'])
+        obtain.assert_not_called()
 
     def test_selected_item_cannot_be_edited_deleted_or_deleted_through_model(self):
         self.selection()
@@ -82,11 +82,13 @@ class ManagementTests(TestCase):
         self.product.refresh_from_db();self.assertEqual(self.product.name,'Panela')
         with self.assertRaises(ProtectedError):self.product.delete()
 
-    def test_confirmation_during_photo_fetch_prevents_stale_edit(self):
+    def test_confirmation_before_edit_write_prevents_stale_edit(self):
+        from gifts.services import update_product
         guest=Client();guest.post(reverse('identify'),{'first_name':'Ana','surname':'Silva'})
         def select(*args):
-            guest.post(reverse('choose_product',args=[self.product.pk]));return None
-        with patch('gifts.views.obtain_product_image',side_effect=select):
+            guest.post(reverse('choose_product',args=[self.product.pk]))
+            return update_product(*args)
+        with patch('gifts.services.update_product',side_effect=select):
             response=self.client.post(reverse('edit_product',args=[self.product.pk]),self.data())
         self.assertEqual(response.status_code,409)
         self.product.refresh_from_db();self.assertEqual(self.product.name,'Panela')
@@ -123,27 +125,29 @@ class ManagementTests(TestCase):
             self.assertEqual(self.client.post(url,{'revision':0}).status_code,302)
             self.assertFalse(Product.objects.exists());self.assertFalse(ProductLink.objects.exists());self.assertFalse(photo.exists())
 
-    @patch('gifts.views.obtain_product_image',return_value=None)
-    def test_failed_image_refresh_keeps_previous_valid_image(self, obtain):
+    @patch('gifts.external.obtain_product_image')
+    def test_editing_links_keeps_previous_valid_image_without_fetching(self, obtain):
         with tempfile.TemporaryDirectory() as directory,override_settings(MEDIA_ROOT=directory):
             from django.core.files.base import ContentFile
             self.product.image.save('photo.webp',ContentFile(recode_image(raster())))
             old=self.product.image.name
             self.client.post(reverse('edit_product',args=[self.product.pk]),self.data())
             self.product.refresh_from_db();self.assertEqual(self.product.image.name,old)
+            obtain.assert_not_called()
 
     def test_missing_image_can_be_retried_without_affecting_selection(self):
+        self.product.name='Kit Panelas';self.product.save()
         self.selection()
-        with tempfile.TemporaryDirectory() as directory,override_settings(MEDIA_ROOT=directory),patch('gifts.views.obtain_product_image',return_value=recode_image(raster())):
-            self.assertEqual(self.client.post(reverse('retry_product_image',args=[self.product.pk])).status_code,302)
+        with tempfile.TemporaryDirectory() as directory,override_settings(MEDIA_ROOT=directory):
+            self.assertEqual(self.client.post(reverse('retry_product_image',args=[self.product.pk]),{'revision':self.product.revision}).status_code,302)
             self.product.refresh_from_db();self.assertTrue(self.product.image)
             self.assertEqual(Selection.objects.count(),1)
 
     def test_missing_physical_file_shows_retry_and_gets_replaced(self):
-        self.product.image='products/missing.webp';self.product.save()
-        self.assertContains(self.client.get(reverse('panel')),'Tentar foto novamente')
-        with tempfile.TemporaryDirectory() as directory,override_settings(MEDIA_ROOT=directory),patch('gifts.views.obtain_product_image',return_value=recode_image(raster())):
-            self.client.post(reverse('retry_product_image',args=[self.product.pk]))
+        self.product.name='Kit Panelas';self.product.image='products/missing.webp';self.product.save()
+        self.assertContains(self.client.get(reverse('panel')),'Usar ilustração')
+        with tempfile.TemporaryDirectory() as directory,override_settings(MEDIA_ROOT=directory):
+            self.client.post(reverse('retry_product_image',args=[self.product.pk]),{'revision':self.product.revision})
             self.product.refresh_from_db();self.assertNotEqual(self.product.image.name,'products/missing.webp')
             self.assertTrue(self.product.image.storage.exists(self.product.image.name))
 
