@@ -1,0 +1,24 @@
+{
+    admin off
+    http_port 8080
+    https_port 8443
+    auto_https disable_redirects
+    skip_install_trust
+}
+http://{$SITE_DOMAIN}:8080 {
+    redir https://{$SITE_DOMAIN}{uri} permanent
+}
+https://{$SITE_DOMAIN}:8443 {
+    encode gzip zstd
+    handle_path /static/* {
+        root * /srv/static
+        file_server
+    }
+    @private_files path /media/* /.env /.env.* /*.sqlite3 /*.sqlite3-* /*.db /*.bak /backups/* /reset_total.py
+    handle @private_files {
+        respond "Not found" 404
+    }
+    handle {
+        reverse_proxy app:8000
+    }
+}

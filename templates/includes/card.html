@@ -1,6 +1,21 @@
-{% load static %}<article class="product-card {% if product.is_selected %}selected{% endif %}">
-  <div class="product-photo">{% if product.image %}<img src="{% url 'product_image' product.pk %}" alt="{{ product.name }}" width="480" height="360" loading="lazy" decoding="async" data-fallback="{% static 'images/placeholder.svg' %}">{% else %}<img src="{% static 'images/placeholder.svg' %}" alt="Foto do produto indisponível" width="480" height="360" loading="lazy">{% endif %}</div>
-  <div class="product-body"><h3>{{ product.name }}</h3><div class="store-links">{% for link in product.links.all %}{% with store=link.store %}<a class="store-button {{ store.style }}" href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ store.label }} <svg class="external-icon" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 3h8v8M13 3 3 13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>{% if not store.known %}<small>{{ store.domain }}</small>{% endif %}</a>{% endwith %}{% endfor %}</div>
-  {% if product.is_selected %}<p class="selected-label">Já selecionado</p>{% if allow_choices and product.is_mine %}<form action="{% url 'cancel_selection_visitor' product.pk %}" method="post" class="cancel-choice-form">{% csrf_token %}<button type="submit" class="text-button" data-cancel-choice>Cancelar minha escolha</button></form>{% endif %}{% elif allow_choices %}<a class="button primary choose-button" href="{% url 'choose_product' product.pk %}" data-choose data-name="{{ product.name }}">Escolher este presente</a>{% endif %}
-  </div>
-</article>
+{% load static %}
+<div class="gift-entry">
+  <article class="product-card {% if product.is_selected %}selected{% endif %}">
+    <div class="product-photo">{% if product.has_available_image %}<img src="{% url 'product_image' product.pk %}" alt="{{ product.name }}" width="480" height="360" loading="lazy" decoding="async" data-fallback="{% static 'images/placeholder.svg' %}">{% else %}<img src="{% static 'images/placeholder.svg' %}" alt="Foto do produto indisponível" width="480" height="360" loading="lazy">{% endif %}</div>
+    <div class="product-body">
+      <h3>{{ product.name }}</h3>
+      {% if product.is_selected %}<p class="selected-label">Já selecionado</p>
+      {% else %}
+        <div class="store-links">{% for link in product.links.all %}{% with store=link.store %}
+          <a class="store-button {{ store.style }}" href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ store.label }}
+            <svg class="external-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 3h8v8M13 3 3 13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            {% if not store.known %}<small>{{ store.domain }}</small>{% endif %}
+          </a>
+        {% endwith %}{% endfor %}</div>
+        {% if allow_choices %}<a class="button primary choose-button" href="{% url 'choose_product' product.pk %}" data-choose data-name="{{ product.name }}">Escolher este presente</a>{% endif %}
+      {% endif %}
+    </div>
+  </article>
+  {% if allow_choices and product.is_mine %}<form action="{% url 'cancel_selection_visitor' product.pk %}" method="post" class="cancel-choice-form">{% csrf_token %}<button type="submit" class="text-button" data-cancel-choice>Cancelar minha escolha</button></form>{% endif %}
+  {% if panel_mode %}{% include 'includes/product_actions.html' %}{% endif %}
+</div>

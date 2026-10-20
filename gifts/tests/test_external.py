@@ -104,6 +104,7 @@ class ExternalTests(TestCase):
     @patch("gifts.external.PinnedTLSConnection")
     def test_stream_size_limit_without_content_length(self, cls, resolver):
         response = cls.return_value.getresponse.return_value
+        response.isclosed.return_value = False
         response.status = 200
         response.getheader.side_effect = lambda name, default=None: default
         response.read1.return_value = b"x" * 101

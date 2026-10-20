@@ -12,12 +12,12 @@ class VisitorForm(forms.Form):
 class ManagerAuthenticationForm(AuthenticationForm):
     def confirm_login_allowed(self, user):
         super().confirm_login_allowed(user)
-        if not user.has_perm("gifts.add_product"):
+        if not user.has_perm("gifts.view_product"):
             raise ValidationError("Sua conta não tem acesso ao painel. Consulte os anfitriões.", code="unauthorized")
 
 
 class ProductForm(forms.Form):
-    name = forms.CharField(label="Nome do produto", max_length=160)
+    name = forms.CharField(label="Nome do produto", max_length=160, widget=forms.TextInput(attrs={"autofocus": True}))
 
 
 class LinkForm(forms.Form):
