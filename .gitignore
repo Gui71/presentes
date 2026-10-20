@@ -13,3 +13,10 @@ staticfiles/
 htmlcov/
 test-results/
 .DS_Store
+*.db
+*.db-*
+*.xlsx
+*.bak
+*.tar.gz
+backups/
+reset_total.py

@@ -14,14 +14,26 @@ class Product(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, verbose_name="Cadastrado por")
     created_at = models.DateTimeField("Criado em", auto_now_add=True)
     submission_key = models.UUIDField(unique=True, editable=False)
+    revision = models.PositiveIntegerField(default=0, editable=False)
 
     class Meta:
         ordering = ["-created_at", "id"]
         verbose_name = "presente"
         verbose_name_plural = "presentes"
+        permissions = [
+            ("export_database", "Pode baixar snapshot do banco"),
+            ("export_selections", "Pode baixar planilha de conferência"),
+        ]
 
     def __str__(self):
         return self.name
+
+    @property
+    def has_available_image(self):
+        try:
+            return bool(self.image and self.image.storage.exists(self.image.name))
+        except OSError:
+            return False
 
 
 class ProductLink(models.Model):
@@ -42,7 +54,7 @@ class ProductLink(models.Model):
 
 
 class Selection(models.Model):
-    product = models.OneToOneField(Product, related_name="selection", on_delete=models.CASCADE, verbose_name="Presente")
+    product = models.OneToOneField(Product, related_name="selection", on_delete=models.PROTECT, verbose_name="Presente")
     owner_digest = models.CharField(max_length=64, editable=False)
     first_name = models.CharField("Nome", max_length=60)
     surname = models.CharField("Primeiro sobrenome", max_length=80)

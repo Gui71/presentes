@@ -14,7 +14,7 @@ class WorkflowTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.manager = get_user_model().objects.create_user("manager", password="a-strong-test-password")
-        cls.manager.user_permissions.add(Permission.objects.get(codename="add_product"))
+        cls.manager.user_permissions.add(*Permission.objects.filter(codename__in=["add_product", "view_product"], content_type__app_label="gifts"))
         cls.staff = get_user_model().objects.create_user("staff", password="a-strong-test-password", is_staff=True)
         cls.product = Product.objects.create(name="Cafeteira especial", created_by=cls.manager, submission_key=uuid.uuid4())
         ProductLink.objects.create(product=cls.product, url="https://www.magazineluiza.com.br/cafeteira", position=0)

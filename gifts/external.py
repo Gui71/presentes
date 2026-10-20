@@ -11,6 +11,8 @@ import threading
 import time
 import unicodedata
 import warnings
+import codecs
+import gzip
 from dataclasses import dataclass
 from html.parser import HTMLParser
 from urllib.parse import quote, urljoin, urlsplit
@@ -147,6 +149,7 @@ def fetch(url, budget, limit):
         cls = PinnedTLSConnection if parsed.scheme == "https" else PinnedConnection
         connection = cls(host, port, address, timeout=budget.remaining())
         connection.budget = budget
+        response = None
         try:
             target = quote(parsed.path or "/", safe="/%:@!$&'()*+,;=-._~")
             if parsed.query:
@@ -171,13 +174,13 @@ def fetch(url, budget, limit):
             if response.status != 200:
                 raise FetchError("Origem indisponível")
             encoding = response.getheader("Content-Encoding", "identity").lower()
-            if encoding not in {"identity", ""}:
+            if encoding not in {"identity", "", "gzip"}:
                 raise FetchError("Codificação não suportada")
             length = response.getheader("Content-Length")
             if length is not None and (not length.isdigit() or int(length) > limit):
                 raise FetchError("Arquivo muito grande")
             chunks, size = [], 0
-            while True:
+            while not response.isclosed():
                 transport.settimeout(budget.remaining())
                 chunk = response.read1(min(65536, limit + 1 - size))
                 if not chunk:
@@ -186,8 +189,16 @@ def fetch(url, budget, limit):
                 size += len(chunk)
                 if size > limit:
                     raise FetchError("Arquivo muito grande")
-            return b"".join(chunks), response.getheader("Content-Type", "").split(";")[0].strip().lower(), url
+            body = b"".join(chunks)
+            if encoding == "gzip":
+                with gzip.GzipFile(fileobj=io.BytesIO(body)) as compressed:
+                    body = compressed.read(limit + 1)
+                if len(body) > limit:
+                    raise FetchError("Conteúdo descomprimido muito grande")
+            return body, response.getheader("Content-Type", "").split(";")[0].strip().lower(), url
         finally:
+            if response is not None:
+                response.close()
             connection.close()
     raise FetchError("Redirecionamentos demais")
 
@@ -196,6 +207,7 @@ class MetadataParser(HTMLParser):
     def __init__(self):
         super().__init__()
         self.meta, self.scripts, self.title = {}, [], ""
+        self.primary_images = []
         self.in_title = self.in_json = False
 
     def handle_starttag(self, tag, attrs):
@@ -203,6 +215,8 @@ class MetadataParser(HTMLParser):
         if tag == "meta":
             key = (attrs.get("property") or attrs.get("name") or "").lower()
             self.meta.setdefault(key, attrs.get("content", ""))
+        if tag == "img" and attrs.get("id") in {"landingImage", "imgBlkFront"}:
+            self.primary_images.append((attrs.get("alt", ""), attrs.get("data-old-hires") or attrs.get("src", "")))
         self.in_title = self.in_title or tag == "title"
         if tag == "script" and attrs.get("type", "").lower() == "application/ld+json":
             self.in_json = True
@@ -228,12 +242,25 @@ def words(value):
 
 def image_candidates(html, product_name):
     parser = MetadataParser()
-    parser.feed(html.decode("utf-8", errors="replace"))
+    charset = re.search(br'charset\s*=\s*["\x27]?\s*([a-zA-Z0-9_-]+)', html[:4096])
+    encoding = "utf-8-sig"
+    if charset:
+        try:
+            candidate = charset.group(1).decode("ascii")
+            # Somente encodings de texto HTML usuais, nunca codecs executáveis/inadequados.
+            if codecs.lookup(candidate).name in {"utf-8", "iso8859-1", "cp1252", "ascii"}:
+                encoding = candidate
+        except LookupError:
+            pass
+    parser.feed(html.decode(encoding, errors="replace"))
     expected = words(product_name)
-    title_matches = bool(expected & words(parser.meta.get("og:title") or parser.title))
+    title_matches = bool(expected & words(parser.meta.get("og:title") or parser.meta.get("twitter:title") or parser.title))
     candidates = []
     if title_matches:
-        candidates.extend(parser.meta.get(key, "") for key in ("og:image", "twitter:image", "twitter:image:src"))
+        candidates.extend(parser.meta.get(key, "") for key in ("og:image:secure_url", "og:image", "twitter:image", "twitter:image:src"))
+    for alt, source in parser.primary_images:
+        if expected & words(alt):
+            candidates.append(source)
 
     def walk(value, depth=0):
         if depth > 12:
@@ -247,7 +274,8 @@ def image_candidates(html, product_name):
                 types = [types]
             if not isinstance(types, list):
                 types = []
-            if "Product" in types and expected & words(str(value.get("name", ""))):
+            is_product = any(isinstance(kind, str) and kind.rstrip("/").rsplit("/", 1)[-1] == "Product" for kind in types)
+            if is_product and expected & words(str(value.get("name", ""))):
                 images = value.get("image", [])
                 if not isinstance(images, list):
                     images = [images]
@@ -256,8 +284,9 @@ def image_candidates(html, product_name):
                         image = image.get("url") or image.get("contentUrl")
                     if isinstance(image, str):
                         candidates.append(image)
-            if "@graph" in value:
-                walk(value["@graph"], depth + 1)
+            for key in ("@graph", "mainEntity"):
+                if key in value:
+                    walk(value[key], depth + 1)
 
     for script in parser.scripts[:10]:
         try:
@@ -300,8 +329,8 @@ def obtain_product_image(urls, product_name):
                     if image_mime not in {"image/jpeg", "image/png", "image/webp"}:
                         continue
                     return recode_image(body)
-                except (ValueError, OSError, http.client.HTTPException, Image.DecompressionBombWarning, Image.DecompressionBombError):
+                except (ValueError, OSError, EOFError, http.client.HTTPException, Image.DecompressionBombWarning, Image.DecompressionBombError):
                     continue
-        except (ValueError, OSError, http.client.HTTPException, RecursionError):
+        except (ValueError, OSError, EOFError, http.client.HTTPException, RecursionError):
             continue
     return None

@@ -8,7 +8,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import PermissionDenied
 from django.core.files.base import ContentFile
 from django.db import IntegrityError, transaction
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, F
 from django.http import FileResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -38,7 +38,7 @@ def manager_required(view):
     @login_required
     @wraps(view)
     def protected(request, *args, **kwargs):
-        if not request.user.is_active or not request.user.has_perm("gifts.add_product"):
+        if not request.user.is_active or not request.user.has_perm("gifts.view_product"):
             raise PermissionDenied
         return view(request, *args, **kwargs)
     return protected
@@ -87,6 +87,12 @@ def panel_context(request, form=None, links=None, submission_key=None):
         "product_form": form or ProductForm(), "link_forms": links or LinkFormSet(prefix="links"),
         "submission_key": submission_key, "open_product_modal": form is not None,
         "can_cancel_selections": request.user.has_perm("gifts.delete_selection"),
+        "can_add_products": request.user.has_perm("gifts.add_product"),
+        "can_edit_products": request.user.has_perm("gifts.change_product"),
+        "can_delete_products": request.user.has_perm("gifts.delete_product"),
+        "can_download_database": request.user.has_perm("gifts.export_database"),
+        "can_export_selections": request.user.has_perm("gifts.export_selections"),
+        "panel_mode": True,
     }
 
 
@@ -97,6 +103,7 @@ def panel(request):
 
 
 @manager_required
+@permission_required("gifts.add_product", raise_exception=True)
 @require_POST
 def create_product(request):
     try:
@@ -140,7 +147,7 @@ def create_product(request):
 
 @require_GET
 def product_image(request, pk):
-    manager = request.user.is_active and request.user.has_perm("gifts.add_product")
+    manager = request.user.is_active and request.user.has_perm("gifts.view_product")
     if not visitor_owner(request) and not manager:
         raise Http404
     product = get_object_or_404(Product, pk=pk)
@@ -163,6 +170,8 @@ def choose_product(request, pk):
     identity = request.session["visitor"]
     try:
         with transaction.atomic():
+            if not Product.objects.filter(pk=pk).update(revision=F("revision") + 1):
+                raise Http404
             Selection.objects.create(product=product, owner_digest=owner, first_name=identity["first_name"], surname=identity["surname"])
     except IntegrityError:
         messages.warning(request, "Esse presente já foi selecionado. Você pode escolher outro item da lista.")
@@ -191,3 +200,122 @@ def cancel_selection_visitor(request, pk):
         raise Http404
     messages.success(request, "Sua escolha foi cancelada. As suas outras escolhas foram mantidas.")
     return redirect("catalog")
+
+
+@manager_required
+@permission_required("gifts.export_database", raise_exception=True)
+@require_POST
+def export_database(request):
+    from .exports import database_download
+    import sqlite3
+    try:
+        return database_download()
+    except (OSError, ValueError, TimeoutError, sqlite3.Error):
+        return render(request, "export_error.html", status=503)
+
+
+@manager_required
+@permission_required("gifts.export_selections", raise_exception=True)
+@require_POST
+def export_selections(request):
+    from .exports import selections_download
+    return selections_download()
+
+
+@require_GET
+def health(request):
+    from django.db import connection, DatabaseError
+    from django.http import HttpResponse
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1 FROM django_migrations LIMIT 1")
+            if not cursor.fetchone():
+                raise DatabaseError
+    except DatabaseError:
+        return HttpResponse("unavailable", status=503, content_type="text/plain")
+    return HttpResponse("ok", content_type="text/plain")
+
+
+@manager_required
+@permission_required("gifts.change_product", raise_exception=True)
+@require_http_methods(["GET", "POST"])
+def edit_product(request, pk):
+    from .services import ProductConflict, update_product
+    product = get_object_or_404(Product, pk=pk)
+    if Selection.objects.filter(product=product).exists():
+        messages.warning(request, "Cancele a escolha antes de editar este presente.")
+        return render(request, "painel.html", panel_context(request), status=409)
+    old_urls = list(product.links.values_list("url", flat=True))
+    form = ProductForm(request.POST if request.method == "POST" else None, initial={"name": product.name})
+    links = LinkFormSet(request.POST if request.method == "POST" else None, initial=[{"url": url} for url in old_urls], prefix="links")
+    revision = str(product.revision)
+    status = 200
+    if request.method == "POST":
+        valid_form, valid_links = form.is_valid(), links.is_valid()
+        if valid_form and valid_links:
+            try:
+                revision = int(request.POST.get("revision", ""))
+                urls = [item["url"] for item in links.cleaned_data if item.get("url")]
+                refresh = urls != old_urls
+                photo = obtain_product_image(urls, form.cleaned_data["name"]) if refresh else None
+                result = update_product(pk, revision, form.cleaned_data["name"], urls, photo, refresh)
+            except (ProductConflict, ValueError) as exc:
+                messages.warning(request, str(exc) if isinstance(exc, ProductConflict) else "Atualize o painel e tente novamente.")
+                return render(request, "painel.html", panel_context(request), status=409)
+            if refresh and not photo:
+                messages.warning(request, "Item atualizado. A busca de foto falhou; mantivemos a foto anterior válida ou a imagem padrão.")
+            else:
+                messages.success(request, "Presente atualizado.")
+            return redirect("panel")
+        status = 400
+        revision = request.POST.get("revision", revision)
+    context = panel_context(request, form, links)
+    context.update(editing_product=product, revision=revision)
+    return render(request, "painel.html", context, status=status)
+
+
+@manager_required
+@permission_required("gifts.delete_product", raise_exception=True)
+@require_http_methods(["GET", "POST"])
+def delete_product(request, pk):
+    from .services import ProductConflict, delete_product as delete
+    product = Product.objects.filter(pk=pk).first()
+    if not product:
+        return redirect("panel")
+    if Selection.objects.filter(product=product).exists():
+        messages.warning(request, "Cancele a escolha antes de excluir este presente.")
+        return render(request, "painel.html", panel_context(request), status=409)
+    if request.method == "POST":
+        try:
+            delete(pk, int(request.POST.get("revision", "")))
+        except (ProductConflict, ValueError) as exc:
+            messages.warning(request, str(exc) if isinstance(exc, ProductConflict) else "Atualize o painel e tente novamente.")
+            return render(request, "painel.html", panel_context(request), status=409)
+        messages.success(request, "Presente excluído.")
+        return redirect("panel")
+    return render(request, "painel.html", {**panel_context(request), "deleting_product": product})
+
+
+@manager_required
+@permission_required("gifts.change_product", raise_exception=True)
+@require_POST
+def retry_product_image(request, pk):
+    from .services import valid_stored_image, remove_unused_image
+    product = get_object_or_404(Product, pk=pk)
+    if valid_stored_image(product.image):
+        return redirect("panel")
+    old_name = product.image.name
+    revision = product.revision
+    urls = list(product.links.values_list("url", flat=True))
+    photo = obtain_product_image(urls, product.name)
+    if photo:
+        saved = product.image.storage.save(f"products/{uuid.uuid4().hex}.webp", ContentFile(photo))
+        if not Product.objects.filter(pk=pk, revision=revision, image=old_name).update(image=saved, revision=F("revision") + 1):
+            product.image.storage.delete(saved)
+            messages.warning(request, "O item mudou durante a busca. Atualize o painel e tente novamente.")
+        else:
+            remove_unused_image(product.image.storage, old_name)
+            messages.success(request, "Foto obtida e salva.")
+    else:
+        messages.warning(request, "Não foi possível obter a foto dos anúncios. A imagem padrão foi mantida.")
+    return redirect("panel")

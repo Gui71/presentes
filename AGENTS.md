@@ -80,3 +80,16 @@ Executar migrações apenas em banco local/de validação; nunca presumir autori
 Verificar visualmente desktop e celular, modais, teclado, foco, contraste e ausência de erros no console. Se alguma ferramenta não estiver disponível, informar a limitação.
 
 Entregar código, migrations, testes, requirements.txt, .env.example, .gitignore, imagens e README com instalação, criação do superusuário, concessão de permissões, execução, testes e requisitos de produção. Relatar arquivos alterados, validações, limitações e decisões pendentes.
+
+## Ampliação de gestão e implantação
+
+- Não mostrar atalho de login administrativo na interface pública; manter /login e /login/ acessíveis diretamente.
+- Exigir gifts.view_product para o painel e permissões separadas add_product, change_product e delete_product nas operações. Não conceder edição, exclusão ou exportação automaticamente a quem cadastra. A migration preserva o acesso de leitura dos gestores anteriores.
+- Bloquear edição e exclusão de presentes com escolha ativa, inclusive por chamada direta e em corrida com confirmação. Primeiro um gestor autorizado cancela a escolha. Não transferir nem apagar escolhas silenciosamente.
+- Cards selecionados inteiros ficam esmaecidos e sem âncoras/botões de compra; cancelamento legítimo fica fora do card. Cancelar restaura links e grupo de disponíveis.
+- Editar mantém nome e links ordenados; mudanças nos links reprocessam a foto. Se a busca falhar, preservar foto anterior válida; usar fallback se ausente/inválida. Permitir retry protegido de foto ausente.
+- Exportações exigem permissões específicas export_database e export_selections, inicialmente só superusuário. Usar POST/CSRF, attachment, no-store, temporários privados com limpeza; snapshot SQLite pela API backup, planilha só com nome+sobrenome e presente ativo, tudo como texto literal.
+- Tipografia em rem, base próxima de 18px e controles de pelo menos 16px; preservar cores, fundo e grade 3/2/1.
+- reset_total.py é artefato separado, fora do Git e da imagem/contexto Docker. Nunca executar no banco real; validar somente em diretórios/bancos temporários. Exigir simulação, recusa de produção, processos parados, confirmação textual e backup privado antes de remover dados.
+- Docker: uma réplica app + Caddy, só proxy com portas externas, usuário sem root, volumes persistentes de banco/mídia/certificados, migrations controladas. Não publicar na OCI nesta tarefa. Consultar DEPLOY-DOCKER-ORACLE.md.
+- Nunca versionar bancos, backups, exports ou .env, nem incluí-los no build. Conferir git ls-files antes de commit/PR.

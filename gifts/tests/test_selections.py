@@ -15,7 +15,7 @@ class SelectionTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.manager = get_user_model().objects.create_user("manager")
-        cls.manager.user_permissions.add(Permission.objects.get(codename="add_product"))
+        cls.manager.user_permissions.add(*Permission.objects.filter(codename__in=["add_product", "view_product"], content_type__app_label="gifts"))
         cls.first = Product.objects.create(name="Cafeteira", created_by=cls.manager, submission_key=uuid.uuid4())
         cls.second = Product.objects.create(name="Panela", created_by=cls.manager, submission_key=uuid.uuid4())
 

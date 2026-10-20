@@ -1,5 +1,6 @@
 "use strict";
-document.querySelectorAll("dialog[open]").forEach(dialog => { dialog.close(); dialog.showModal(); });
+let previousFocus;
+document.querySelectorAll("dialog[open]").forEach(dialog => { if (dialog.dataset.returnFocus) previousFocus=document.getElementById(dialog.dataset.returnFocus); dialog.close(); dialog.showModal(); });
 document.querySelectorAll("dialog[data-required]").forEach(dialog => dialog.addEventListener("cancel", event => event.preventDefault()));
 document.querySelectorAll("dialog").forEach(dialog => dialog.addEventListener("keydown", event => {
   if (event.key !== "Tab") return;
@@ -8,7 +9,6 @@ document.querySelectorAll("dialog").forEach(dialog => dialog.addEventListener("k
   if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
   else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
 }));
-let previousFocus;
 document.querySelectorAll("[data-choose]").forEach(link => link.addEventListener("click", event => {
   event.preventDefault();
   previousFocus = link;

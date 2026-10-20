@@ -28,7 +28,7 @@ No ambiente em nuvem preparado, o ambiente virtual existente fica em `/workspace
 
 ## Acessos administrativos
 
-O superusuário cria contas no Django admin. Para permitir o painel, marque a conta como **ativa** e conceda **Presentes → presente → Pode adicionar presente** (`gifts.add_product`). Não é necessário marcar `Membro da equipe/is_staff`; esse campo sozinho não concede acesso ao painel.
+O superusuário cria contas no Django admin. Para permitir o painel, marque a conta como **ativa** e conceda `gifts.view_product`. Para cadastrar, conceda também `gifts.add_product`; para editar, `gifts.change_product`; para excluir, `gifts.delete_product`. Não é necessário marcar `Membro da equipe/is_staff`; esse campo sozinho não concede acesso ao painel. As permissões de alteração, exclusão e exportação não são concedidas pelo cadastro.
 
 Para cancelar escolhas pelo painel, conceda também **Pode excluir escolha** (`gifts.delete_selection`). Superusuários ativos têm ambas. O admin exige `is_staff` e as permissões próprias do Django; o acesso ao painel não dá acesso ao admin. Não existe cadastro público de gestores. Produtos são criados pelo painel, onde nome e links passam pela extração segura de fotos; o admin mostra seus dados e permite administração geral.
 
@@ -36,7 +36,7 @@ Para cancelar escolhas pelo painel, conceda também **Pode excluir escolha** (`g
 
 - Antes de carregar produtos, o servidor exige apenas nome e primeiro sobrenome. Acentos e grafias legítimas são aceitos. Esses dados não autenticam uma identidade e não concedem permissões administrativas.
 - O convidado confirma a escolha no site. Cada produto admite **uma única escolha ativa**, inclusive em confirmações concorrentes; uma pessoa pode escolher vários presentes.
-- Os já selecionados vão para o final da lista, ficam esmaecidos e recebem o texto **Já selecionado**. Os nomes aparecem somente aos gestores.
+- Os já selecionados vão para o final da lista, com ordem estável dentro dos grupos. O card inteiro fica esmaecido, mostra **Já selecionado** e não contém nenhum link de compra/seleção. O cancelamento legítimo fica fora do card e restaura todos os links. Os nomes aparecem somente aos gestores.
 - A confirmação é persistida no banco. Fechar a visita não libera automaticamente os produtos; gestores autorizados podem cancelar escolhas pelo painel ou admin.
 - O convidado pode cancelar cada uma das próprias escolhas durante a mesma sessão, preservando as outras e podendo escolher novos itens. O botão aparece apenas nas escolhas da sessão atual. O servidor exige o identificador secreto dessa sessão: **o nome não autoriza cancelamento**, e repeti-lo em outra sessão não dá acesso às escolhas anteriores. Não há token de autorização em localStorage ou armazenamento permanente no navegador.
 - As escolhas guardam nome e primeiro sobrenome para consulta exclusiva dos gestores. O identificador de autorização é armazenado como digest no registro da escolha. Quando a sessão se perde, o convidado perde o acesso ao cancelamento; a escolha permanece no banco e pode ser cancelada pelos gestores. Foi expressamente aceita a limitação de que navegadores podem restaurar sessões ao reabrir.
@@ -49,7 +49,7 @@ Administradores usam sessão nativa do Django no servidor, cookies HttpOnly/Same
 
 O formulário pede só nome do produto e um ou mais links ordenados. `+ outro link` adiciona campos; links adicionais podem ser removidos. Há limite técnico de 10 links por cadastro. A chave de envio impede duplicação por repetição do mesmo formulário e é vinculada à sessão do gestor.
 
-A foto é buscada no primeiro anúncio e, se necessário, nos seguintes. São considerados metadados Open Graph/Twitter relacionados ao nome do produto e JSON-LD `Product` com nome correspondente; não são coletadas imagens arbitrárias da página. A correspondência é uma heurística, não comprovação visual do conteúdo. Bloqueios, CAPTCHA, páginas dependentes de JavaScript, dados ausentes ou falhas de rede resultam em imagem padrão local e aviso no painel; o produto e todos os links são preservados. Não há consulta às lojas durante a visita pública.
+A foto é buscada no primeiro anúncio e, se necessário, nos seguintes. São considerados Open Graph (inclusive secure_url), Twitter, JSON-LD Product (também mainEntity e tipos com URI schema.org), charset HTML usual e imagem principal com id de produto/alt correspondente. Não são coletadas imagens arbitrárias ou logos sem relação com o produto. Gzip tem limite também após descompressão. A correspondência é uma heurística, não comprovação visual do conteúdo. Bloqueios, CAPTCHA, páginas dependentes de JavaScript, dados ausentes ou falhas de rede resultam em imagem padrão local e aviso no painel; o produto e todos os links são preservados. Não há consulta às lojas durante a visita pública.
 
 Proteções de rede e arquivo:
 
@@ -104,10 +104,35 @@ Os dois logins compartilham o bloqueio **django-axes em banco**, compatível com
 
 Confirmação exclusiva no site, vários presentes por convidado, nomes apenas para gestores, cancelamento por gestores autorizados e cancelamento individual do próprio convidado na mesma sessão. Foi aceita explicitamente a possibilidade de restauração de cookies pelo navegador. Não há expiração automática da escolha, integração de compra ou cancelamento autorizado somente pelo nome.
 
-## Validação realizada nesta sprint
+## Validação da primeira sprint
 
 Base: branch `work`, commit `5d7f05db4ce96571d4b267801257ddb525293d10`, árvore inicialmente limpa e contendo só `AGENTS.md`.
 
 Passaram `check`, `makemigrations --check --dry-run`, **46 testes**, migrações locais, `collectstatic`, a configuração WSGI do Gunicorn e `check --deploy` com valores de produção temporários e seguros. A suíte inclui confirmações concorrentes com um único vencedor, cancelamento individual, recusa de cancelamento por outra sessão com o mesmo nome, permanência da escolha após perder a sessão e a limitação aceita de um cookie restaurado continuar válido.
 
 Playwright com Chromium do sistema verificou desktop/tablet/celular (3/2/1 colunas), identificação, foco/teclado dos modais, confirmação, cancelamento do convidado e do gestor, login/logout, adicionar/remover links, erro de validação e fallback de foto. Não houve erros inesperados de console. Botões principais e de loja verificados tiveram contraste de texto acima de 4,5:1. Os dados usados eram fixtures em banco temporário, separado do banco real, que continua vazio e sem contas predefinidas. Testes de rede usaram mocks, não comprovam extração em lojas reais. Não houve publicação nem validação da hospedagem de produção.
+
+## Gestão, exportações e ampliação atual
+
+O atalho público de anfitriões foi removido; digite `/login` ou `/login/` diretamente. O fundo e as cores foram preservados. A escala de fontes usa rem, base de 18px e controles de pelo menos 16px, com reflow em desktop/celular e texto ampliado.
+
+Editar abre modal com nome e links ordenados preenchidos. Mudar links busca a foto na nova ordem; falha mantém a foto anterior se ela ainda for válida, ou usa o padrão se estiver ausente/inválida. Nome sem alteração de links preserva a imagem. “Tentar foto novamente” é ação protegida para itens sem arquivo disponível; não consulta lojas nas visitas públicas nem muda a escolha. Excluir exige confirmação com o nome do item e remove links/foto após commit. Reenvio de exclusão concluída é idempotente.
+
+**Edição e exclusão são bloqueadas enquanto houver escolha ativa.** Primeiro um gestor autorizado cancela a escolha. Versão do registro, escrita atômica e relação protegida impedem alterar/apagar silenciosamente uma escolha concorrente. Migrations são incrementais e preservam produtos, links e escolhas. Para manter os gestores existentes, a migration acrescenta view_product a usuários/grupos que já tinham add_product; nenhuma permissão de edição/exclusão/exportação é acrescentada.
+
+Downloads no painel (POST com CSRF, sem parâmetros de caminho):
+
+- Banco `.db`: inicialmente superusuário; delegação exige `gifts.view_product` + `gifts.export_database`. Usa o backend/caminho real das configurações, backup online da API SQLite, integridade verificada, temporário privado e limpeza ao fechar a resposta. Inclui os dados privados do banco, portanto delegue somente a responsáveis pelos backups. Mídia e .env não fazem parte do arquivo.
+- Conferência `.xlsx`: inicialmente superusuário; delegação exige `gifts.view_product` + `gifts.export_selections`. Apenas nome + primeiro sobrenome e presente ativo. Uma linha por escolha, sem fundir homônimos; cancelamentos não aparecem. Valores são células de texto literal, inclusive se começarem por sinais de fórmula. Planilha vazia mantém os dois cabeçalhos.
+
+`python manage.py backup_database` e `backup_media` escrevem backup em stdout para redirecionamento privado. `import_snapshot` e `import_media` importam de stdin somente para destinos vazios e recusam sobrescrita. Consulte **[DEPLOY-DOCKER-ORACLE.md](DEPLOY-DOCKER-ORACLE.md)** para comandos completos, Docker/Caddy não root, volumes, HTTPS, migrações controladas, transferência, backup/restauração e rollback. O reset é artefato opcional separado: não está no repositório, build ou deploy e foi testado apenas em bancos temporários.
+
+### Diagnóstico das fotos
+
+Foi reproduzido com um servidor HTTP de teste um erro real: após consumir uma resposta com Connection: close/Content-Length, o loop tentava reajustar o timeout no socket já fechado, descartando a imagem válida. O loop agora verifica o término da resposta antes de usar o socket. O teste verifica HTML comprimido, URL relativa, download de imagem real e recodificação para WebP, em vez de aceitar só o placeholder. Metadados adicionais receberam testes próprios. A proteção de IP conectado, TLS, redirects e os limites continuam ativos.
+
+Os três exemplos enviados (Amazon B07WGQ64QR, Magalu gk6k991a5g e Mercado Livre MLB44200947) foram tentados nesta nuvem. A resolução DNS direta falhou antes do HTTP, e o proxy retornou 403 de política de rede. Isso não permite afirmar que as fotos dessas lojas foram obtidas aqui; bloqueios/CAPTCHA também não são contornados. A extração permanece direta para garantir IP validado/conectado; um proxy que só resolve hostname não oferece essa garantia. Verifique DNS/egress no servidor e use a ação protegida para nova tentativa após corrigir a conectividade.
+
+Base desta ampliação: `a735c34d8a47cd52fb84f9fcdef86b5a0e169f19` (master com PR anterior incorporado). Passaram 67 testes em Python nativo e os mesmos 67 na imagem Docker, além de 5 testes do reset separado em bancos temporários. Também passaram check, migrations incrementais, ausência de migrations pendentes, collectstatic, preload do Gunicorn e check --deploy com configuração temporária de produção.
+
+Playwright verificou navegação pública, seleção/cancelamento e remoção/restauração de links, edição/exclusão em modais, downloads, grade 3/2/1, controles ampliados, reflow com texto a 200%, foco/teclado e console sem erros inesperados. A revisão visual cobriu desktop e celular, com fixtures privadas em banco temporário. Docker/Compose foram validados em AMD64 com build, configuração, HTTPS local confiando na CA do Caddy e persistência de produto, escolha e foto WebP após recriação dos containers. Arquivos privados responderam 404 pelo proxy. A infraestrutura OCI, ARM64 e o certificado do domínio real não foram executados/validados nesta tarefa.

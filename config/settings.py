@@ -68,7 +68,7 @@ DATABASES = {"default": {
     "ENGINE": "django.db.backends.sqlite3",
     "NAME": BASE_DIR / os.getenv("DATABASE_PATH", "db.sqlite3"),
     "OPTIONS": {"timeout": 20},
-    "TEST": {"NAME": BASE_DIR / ".test.sqlite3"},
+    "TEST": {"NAME": os.getenv("TEST_DATABASE_PATH", str(BASE_DIR / ".test.sqlite3"))},
 }}
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -110,6 +110,7 @@ SESSION_COOKIE_SECURE = PRODUCTION
 CSRF_COOKIE_SECURE = PRODUCTION
 CSRF_COOKIE_SAMESITE = "Lax"
 SECURE_SSL_REDIRECT = PRODUCTION
+SECURE_REDIRECT_EXEMPT = [r"healthz/$"]
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = "same-origin"
 X_FRAME_OPTIONS = "DENY"

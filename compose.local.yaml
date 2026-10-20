@@ -1,0 +1,4 @@
+# Apenas testes locais: certificado da CA interna do Caddy, sem ACME público.
+services:
+  proxy:
+    ports: !override ["127.0.0.1:8080:8080", "127.0.0.1:8443:8443"]
