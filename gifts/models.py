@@ -13,6 +13,7 @@ class Product(models.Model):
     image = models.ImageField("Foto automática", upload_to=product_image_path, blank=True)
     illustration_key = models.CharField(max_length=48, blank=True, editable=False)
     illustration_digest = models.CharField(max_length=64, blank=True, editable=False)
+    illustration_choice = models.CharField(max_length=48, blank=True, editable=False)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, verbose_name="Cadastrado por")
     created_at = models.DateTimeField("Criado em", auto_now_add=True)
     submission_key = models.UUIDField(unique=True, editable=False)
@@ -39,7 +40,9 @@ class Product(models.Model):
 
     @property
     def catalog_illustration(self):
-        from .illustrations import match_illustration
+        from .illustrations import illustration_by_key, match_illustration
+        if self.illustration_choice:
+            return illustration_by_key(self.illustration_choice)
         return match_illustration(self.name)
 
     @property
@@ -50,10 +53,12 @@ class Product(models.Model):
                 return "Imagem existente preservada."
             if not candidate or candidate.key != self.illustration_key:
                 return "O nome mudou. Confira se a ilustração ainda representa este presente."
+            if self.illustration_choice:
+                return "Ilustração escolhida no catálogo."
             return "Ilustração do catálogo aplicada."
         if candidate:
             return "Ilustração disponível no catálogo."
-        return "Sem ilustração compatível. Use um nome claro ou solicite a inclusão deste objeto no catálogo."
+        return "Sem ilustração compatível pelo nome. Use Escolher ilustração para selecionar no catálogo."
 
 
 class ProductLink(models.Model):

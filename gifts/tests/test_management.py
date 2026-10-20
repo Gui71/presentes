@@ -30,6 +30,11 @@ class ManagementTests(TestCase):
         ProductLink.objects.create(product=cls.product,url='https://shop.example/second',position=1)
 
     def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        settings = override_settings(MEDIA_ROOT=directory.name)
+        settings.enable()
+        self.addCleanup(settings.disable)
         self.client.force_login(self.user)
 
     def data(self):

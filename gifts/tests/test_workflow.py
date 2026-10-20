@@ -133,13 +133,15 @@ class WorkflowTests(TestCase):
     @patch("gifts.external.obtain_product_image")
     def test_multiple_links_preserve_order_and_duplicate_submission_is_idempotent(self, obtain):
         data = self.product_data()
-        for _ in range(2):
-            self.assertRedirects(self.client.post(reverse("create_product"), data), reverse("panel"))
-        product = Product.objects.get(name="Panela")
-        self.assertEqual(list(product.links.values_list("url", flat=True)), [data["links-0-url"], data["links-1-url"]])
-        obtain.assert_not_called()
-        self.assertEqual(Product.objects.filter(name="Panela").count(), 1)
-        self.assertFalse(product.image)
+        with tempfile.TemporaryDirectory() as media, override_settings(MEDIA_ROOT=media):
+            for _ in range(2):
+                self.assertRedirects(self.client.post(reverse("create_product"), data), reverse("panel"))
+            product = Product.objects.get(name="Panela")
+            self.assertEqual(list(product.links.values_list("url", flat=True)), [data["links-0-url"], data["links-1-url"]])
+            obtain.assert_not_called()
+            self.assertEqual(Product.objects.filter(name="Panela").count(), 1)
+            self.assertTrue(product.has_available_image)
+            self.assertEqual(product.illustration_key, "cookware_black")
 
     @patch("gifts.external.obtain_product_image")
     def test_invalid_and_forged_product_forms_never_extract(self, obtain):

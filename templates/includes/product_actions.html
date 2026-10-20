@@ -4,5 +4,5 @@
     {% if can_delete_products %}<a id="delete-{{ product.pk }}" class="button secondary danger" href="{% url 'delete_product' product.pk %}">Excluir</a>{% endif %}
   {% endif %}
   <p class="form-hint">{{ product.image_notice }}</p>
-  {% if can_edit_products and product.catalog_illustration %}<a id="illustration-{{ product.pk }}" class="text-button" href="{% url 'apply_illustration' product.pk %}">{% if product.has_available_image %}Rever ilustração{% else %}Usar ilustração{% endif %}</a>{% endif %}
+  {% if can_edit_products %}<a id="illustration-{{ product.pk }}" class="text-button" href="{% url 'apply_illustration' product.pk %}">{% if product.has_available_image %}Rever ilustração{% elif product.catalog_illustration %}Usar ilustração{% else %}Escolher ilustração{% endif %}</a>{% endif %}
 </div>

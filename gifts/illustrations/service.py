@@ -7,15 +7,18 @@ from django.db.models import F
 
 from gifts.models import Product
 from gifts.services import ProductConflict, remove_unused_image, valid_stored_image
-from . import match_illustration, read_illustration
+from . import illustration_by_key, match_illustration, read_illustration
 
 
-def apply_illustration(pk, revision, replace_existing=False):
+def apply_illustration(pk, revision, replace_existing=False, illustration_choice=None):
     """Aplica bytes locais validados; preserva a imagem até confirmar a substituição."""
     snapshot = Product.objects.filter(pk=pk).first()
     if snapshot is None:
         raise ProductConflict("O presente foi excluído. Atualize o painel.")
-    candidate = match_illustration(snapshot.name)
+    choice = snapshot.illustration_choice if illustration_choice is None else illustration_choice
+    candidate = illustration_by_key(choice) if choice else match_illustration(snapshot.name)
+    if choice and candidate is None:
+        raise ValueError("Escolha uma ilustração disponível no catálogo.")
     if candidate is None:
         return "no_match"
     # Leitura e validação de arquivo antes da transação, sem rede ou processamento de IA.
@@ -33,6 +36,9 @@ def apply_illustration(pk, revision, replace_existing=False):
                 return "preserved"
             if (previous_valid and product.illustration_key == candidate.key
                     and product.illustration_digest == candidate.digest):
+                if product.illustration_choice != choice:
+                    product.illustration_choice = choice
+                    product.save(update_fields=["illustration_choice"])
                 return "unchanged"
             old_name, storage = product.image.name, product.image.storage
             new_name = storage.save(f"products/{uuid.uuid4().hex}.webp", ContentFile(data))
@@ -40,7 +46,8 @@ def apply_illustration(pk, revision, replace_existing=False):
             product.image = new_name
             product.illustration_key = candidate.key
             product.illustration_digest = candidate.digest
-            product.save(update_fields=["image", "illustration_key", "illustration_digest"])
+            product.illustration_choice = choice
+            product.save(update_fields=["image", "illustration_key", "illustration_digest", "illustration_choice"])
             if old_name:
                 transaction.on_commit(partial(remove_unused_image, storage, old_name))
         return "applied"

@@ -12,13 +12,15 @@
         "jogo talher",
         "kit de talher",
         "kit talher",
-        "conjunto de talher"
+        "conjunto de talher",
+        "talher"
       ],
       "exclude": [
         "porta talheres",
         "porta talher",
         "porta de talheres",
-        "porta de talher"
+        "porta de talher",
+        "suporte para talher"
       ],
       "prompt": "A generic stainless-steel flatware set, forks, table knives and tablespoons.",
       "sha256": "a7a75d72faf7328e2c9ffa100f87f6e3e045dda4ab200fb8e0fe4c7fc5ef23c9",
@@ -39,7 +41,8 @@
         "jogo toalhas",
         "conjunto de toalha",
         "conjunto de toalhas",
-        "toalhas"
+        "toalhas",
+        "toalha"
       ],
       "exclude": [
         "mesa",
@@ -67,7 +70,9 @@
       ],
       "exclude": [
         "porta pratos",
-        "escorredor de pratos"
+        "escorredor de pratos",
+        "suporte para prato",
+        "prato de microondas"
       ],
       "prompt": "A plain ivory ceramic set of dinner plates, side plates and bowls.",
       "sha256": "f20d97e48a70a6e8cd63fbbe03793cede5aae656b621d73428209291ec36d0ad",
@@ -82,7 +87,9 @@
       ],
       "exclude": [
         "porta copos",
-        "liquidificador"
+        "liquidificador",
+        "copo de cafe",
+        "copo medidor"
       ],
       "prompt": "A matching set of simple clear cylindrical drinking glasses.",
       "sha256": "702aec665ed5996126b83a50b46e103d3f8a7f5ffc90066fafe65c1af7d95d62",
@@ -108,12 +115,12 @@
         "liquidificador"
       ],
       "exclude": [
-        "copo para",
-        "copo de",
-        "jarra para",
-        "jarra de",
-        "tampa para",
-        "lamina para"
+        "copo para liquidificador",
+        "copo de liquidificador",
+        "jarra para liquidificador",
+        "jarra de liquidificador",
+        "tampa para liquidificador",
+        "lamina para liquidificador"
       ],
       "prompt": "A simple ivory countertop blender with a clear glass pitcher.",
       "sha256": "67130f67bbabf593e44697e1ac78b3f98f4184b624aebffb71f8e8bfbc09f0af",
@@ -124,13 +131,17 @@
       "key": "cookware_black",
       "label": "Kit de panelas",
       "aliases": [
-        "kit panelas",
-        "kit de panelas",
-        "jogo de panelas",
-        "conjunto de panelas",
-        "conjunto panelas"
+        "panela"
       ],
-      "exclude": [],
+      "exclude": [
+        "panela de pressao",
+        "panela eletrica",
+        "panela de arroz",
+        "panela a vapor",
+        "tampa de panela",
+        "cabo de panela",
+        "suporte para panela"
+      ],
       "prompt": "A black nonstick cooking-pot set with glass lids and black insulated handles.",
       "sha256": "81bb3e4a4c7caf37e32d0e7e200fcdc138ce47d22e2e4b059dfcd1a71f445dfd",
       "source_png": "exec-b1dabde9-057b-498f-b8a8-ea8f291d7872.png",
@@ -143,8 +154,8 @@
         "frigideira"
       ],
       "exclude": [
-        "cabo de",
-        "tampa para"
+        "cabo de frigideira",
+        "tampa para frigideira"
       ],
       "prompt": "One black nonstick frying pan with a black insulated handle.",
       "sha256": "dbbe7c25549957950eb71a59f595682ff04091fb9e41a1682684c35c67f01261",
@@ -157,7 +168,10 @@
       "aliases": [
         "leiteira"
       ],
-      "exclude": [],
+      "exclude": [
+        "tampa de leiteira",
+        "cabo de leiteira"
+      ],
       "prompt": "One black nonstick milk saucepan with a pouring lip and black handle.",
       "sha256": "9e084adf65c6bc69c538f3d9a62d6bb2b444c94a28ba3717a39b0c68c4a57f51",
       "source_png": "exec-1059eaab-ec1a-4904-b63e-ca79ea23a9ca.png",
@@ -172,7 +186,9 @@
         "panela para pipoca"
       ],
       "exclude": [
-        "eletrica"
+        "eletrica",
+        "tampa de pipoqueira",
+        "cabo de pipoqueira"
       ],
       "prompt": "One black stovetop popcorn pot with a manual stirring crank.",
       "sha256": "72bd0a002f086dd869b5c16c7559ec8fc6f4c219e458726d16360fb7c175d083",
@@ -186,9 +202,13 @@
         "kit utensilios",
         "kit de utensilios",
         "jogo de utensilios",
-        "conjunto de utensilios"
+        "conjunto de utensilios",
+        "utensilio de cozinha"
       ],
-      "exclude": [],
+      "exclude": [
+        "porta utensilio",
+        "suporte para utensilio"
+      ],
       "prompt": "A set of black silicone cooking utensils with wooden handles.",
       "sha256": "bf2a2f6b0400733fe8bd1e2c779aaee99f0a2f3a73b0da958d04ffebdba3bbb5",
       "source_png": "exec-38ee3885-65ff-45d9-8475-ca1662da1a03.png",
@@ -201,9 +221,15 @@
         "kit facas",
         "kit de facas",
         "jogo de facas",
-        "conjunto de facas"
+        "conjunto de facas",
+        "faca"
       ],
-      "exclude": [],
+      "exclude": [
+        "porta faca",
+        "suporte para faca",
+        "afiador de faca",
+        "faca eletrica"
+      ],
       "prompt": "A small stainless steel kitchen knife set with black handles.",
       "sha256": "8d2227f08a7ab76247e96fbbdb599e0f67d07afe31f8ec17fa7329c62294e58d",
       "source_png": "exec-ff3f5da0-689e-444f-9454-4bb1a3adb92b.png",
@@ -216,7 +242,10 @@
         "pirex redondo",
         "refratario redondo"
       ],
-      "exclude": [],
+      "exclude": [
+        "tampa para pirex",
+        "tampa para refratario"
+      ],
       "prompt": "One round clear glass oven-safe casserole bowl with its matching transparent lid, plain and empty.",
       "sha256": "43c1f41bd7075454d31dd4399d56adc4f3b2b2a235d27c642c7fa395eb55fe0c",
       "source_png": "exec-7d174c0c-7df3-4c88-88c2-3f376831fbf7.png",
@@ -229,7 +258,10 @@
         "pirex retangular",
         "refratario retangular"
       ],
-      "exclude": [],
+      "exclude": [
+        "tampa para pirex",
+        "tampa para refratario"
+      ],
       "prompt": "One rectangular clear glass oven-safe baking dish with two small integrated side handles, no lid, empty.",
       "sha256": "e6fe1cef2099fb8ed9ee1e361543004579a8a1c36a970fcfc01e2c9e8f60d9d6",
       "source_png": "exec-69e99ea1-f30e-4188-a23c-77150dcad3bd.png",
@@ -267,7 +299,9 @@
       "aliases": [
         "saleiro"
       ],
-      "exclude": [],
+      "exclude": [
+        "tampa de saleiro"
+      ],
       "prompt": "One simple ivory ceramic salt cellar with a small matching lid placed beside it. No spoon, no lettering, no visible salt.",
       "sha256": "ea534a4e993e6fe44be75892b95d8675cc2a92d1d001f4e8e6cceedb1ef37c8f",
       "source_png": "exec-271baff7-1037-4b03-a68e-645c003c083e.png",
@@ -279,7 +313,9 @@
       "aliases": [
         "acucareiro"
       ],
-      "exclude": [],
+      "exclude": [
+        "tampa de acucareiro"
+      ],
       "prompt": "One simple ivory ceramic sugar bowl with a small matching lid and two tiny side handles. No spoon, no sugar, no markings.",
       "sha256": "f78527c8bf1e19d39e0819bce9e2d58a8f86132b1b4cfc11e466e4fdcb503e26",
       "source_png": "exec-9ab21632-eaee-41bc-92de-4767475ca238.png",
@@ -347,7 +383,8 @@
         "baldes"
       ],
       "exclude": [
-        "pipoca"
+        "pipoca",
+        "tampa de balde"
       ],
       "prompt": "Two simple gray household plastic buckets with their own swing handles, one slightly smaller, standing next to each other, empty.",
       "sha256": "9846e266a948be8339c6f170dac3daf058625c56f17eb309c5825c13eec0f77e",
@@ -413,7 +450,9 @@
         "potes de plastico",
         "potes plasticos"
       ],
-      "exclude": [],
+      "exclude": [
+        "tampa de pote"
+      ],
       "prompt": "A small neat set of rectangular clear plastic food storage containers with plain ivory lids, some stacked, empty. No labels.",
       "sha256": "8fbaa3223a57eaa51c218d57c378ba575338b41f1ec16dd8043f9f241ecf2df8",
       "source_png": "exec-73ecb437-e31a-4124-934f-d56ba5cc192b.png",
@@ -428,7 +467,8 @@
       ],
       "exclude": [
         "vidro",
-        "borossilicato"
+        "borossilicato",
+        "tampa de pote"
       ],
       "prompt": "A small coordinated set of tall clear pantry storage canisters for dry foods, different heights, plain ivory airtight lids, empty. No food, no labels.",
       "sha256": "b35d13f87a8a8a4c8bec180621c700e91ecaf310bcd32f5dcf44ff6c999470ac",
@@ -443,7 +483,9 @@
         "potes vidro",
         "potes borossilicato"
       ],
-      "exclude": [],
+      "exclude": [
+        "tampa de pote"
+      ],
       "prompt": "A small set of transparent rectangular glass food storage containers with plain gray locking lids, empty, arranged neatly. No food, no labels.",
       "sha256": "00b5bd736c471883b4aebca4848e6003baced63b596cf012e326aa7be055375a",
       "source_png": "exec-2b2c73fc-f165-486b-bb05-29e3fc05d71c.png",
@@ -457,7 +499,9 @@
         "pote para pipoca",
         "pote de pipoca"
       ],
-      "exclude": [],
+      "exclude": [
+        "tampa de pote"
+      ],
       "prompt": "One large plain ivory plastic serving bowl suitable for popcorn, rounded and open, empty. No popcorn, no printed motifs.",
       "sha256": "660a876d9531855073f164c20f1eb4728738bddb1aeb1cc0f8fb6914c58087f3",
       "source_png": "exec-67aaaf86-118b-410c-a367-9bee31daab8b.png",
@@ -484,9 +528,14 @@
         "jarra de agua",
         "jarra para agua",
         "jarras para agua",
-        "jarras de agua"
+        "jarras de agua",
+        "jarra"
       ],
-      "exclude": [],
+      "exclude": [
+        "liquidificador",
+        "cafeteira",
+        "tampa de jarra"
+      ],
       "prompt": "One plain transparent glass water or juice pitcher with a handle and simple pouring spout, empty, no lid, fully visible. No glasses or fruit.",
       "sha256": "b52ac8d1a4e661cea9c6f39a05fc0876ad9b5639df179262c9542337c9055e8d",
       "source_png": "exec-82e6ddf3-708b-4c69-a7dc-d7621adab251.png",
@@ -561,7 +610,11 @@
       "aliases": [
         "lixeira"
       ],
-      "exclude": [],
+      "exclude": [
+        "saco de lixeira",
+        "saco para lixo",
+        "tampa de lixeira"
+      ],
       "prompt": "One simple medium gray household pedal waste bin with its lid closed and a small plain black foot pedal, no branding, fully visible. No trash or bags.",
       "sha256": "57fff8e736556ccb44009e8c69d1f0a59c027e3f985489e37e546caed4849439",
       "source_png": "exec-3f4e41e8-8d4f-4bd8-8b76-36e3a3d0559d.png",
@@ -574,7 +627,9 @@
         "jogo roupa de cama",
         "jogo de roupa de cama",
         "jogo de cama",
-        "jogo de lencois"
+        "jogo de lencois",
+        "roupa de cama",
+        "lencol"
       ],
       "exclude": [
         "berco",
@@ -607,8 +662,8 @@
         "batedeira"
       ],
       "exclude": [
-        "tigela para",
-        "batedor para"
+        "tigela para batedeira",
+        "batedor para batedeira"
       ],
       "prompt": "One compact unbranded ivory electric stand mixer with a plain stainless mixing bowl and beaters, no attachments beyond its standard beaters, no food.",
       "sha256": "8ca6042c2db3b1f29fbc8f0c2e23d2e23288728acd0bf448fe0a7a83884a8774",
@@ -625,8 +680,8 @@
         "capsulas",
         "capsula",
         "italiana",
-        "filtro para",
-        "jarra para"
+        "filtro para cafeteira",
+        "jarra para cafeteira"
       ],
       "prompt": "One plain ivory electric drip coffee maker with a transparent glass carafe, simple controls without text. No capsules, no coffee, no cups.",
       "sha256": "384802eb75abbaa1e04fbedb948db961683ca8d3aa1aaf09acfbedfb4d2c33e3",
@@ -640,7 +695,11 @@
         "mini processador",
         "miniprocessador"
       ],
-      "exclude": [],
+      "exclude": [
+        "copo de mini processador",
+        "lamina de mini processador",
+        "tampa de mini processador"
+      ],
       "prompt": "One compact electric mini food chopper with a small clear bowl, plain ivory lid and simple ivory motor top, empty, fully visible. No food or extra accessories.",
       "sha256": "1e12c06ea06266001fa81549d66f1a9ce84e4fc08f27aa0ff4934bf8f88db991",
       "source_png": "exec-97aa9cf7-6045-4b17-9159-53ac5a787ecd.png",
@@ -652,7 +711,9 @@
       "aliases": [
         "sanduicheira"
       ],
-      "exclude": [],
+      "exclude": [
+        "placa de sanduicheira"
+      ],
       "prompt": "One compact plain black electric sandwich press, slightly open to reveal the two dark triangular nonstick cooking plates, no text. No bread or sandwiches.",
       "sha256": "e9eabc095646d5a5518fe998209e068421e969abfbcb162b8063ab8ab6256a88",
       "source_png": "exec-1c2c6299-6353-4f16-9645-7e620731030b.png",
@@ -664,7 +725,10 @@
       "aliases": [
         "ferro de passar"
       ],
-      "exclude": [],
+      "exclude": [
+        "capa de ferro",
+        "base para ferro"
+      ],
       "prompt": "One simple ivory and light gray electric steam iron standing at a gentle angle so the soleplate is partially visible. No ironing board, no clothing, no text or brand.",
       "sha256": "c73d26d69686cc9ae9f5f6beb7622a46fba00de11de66c897f80ed15c7a8a4a3",
       "source_png": "exec-bf77aabe-9c86-4323-8a00-dc68e17b54d7.png",
@@ -679,7 +743,9 @@
         "maquina de waffles",
         "mini maquina de waffles"
       ],
-      "exclude": [],
+      "exclude": [
+        "placa de maquina de waffle"
+      ],
       "prompt": "One small compact round black electric waffle maker, open so its round waffle-grid cooking plates are visible. No waffles, no batter, no text.",
       "sha256": "e04cbbcab05f5170115b3efcef10dabf0a86d14e5e876c2d1f1ba0c49287fe18",
       "source_png": "exec-fa09eba7-75d5-4a1f-ade5-4fc032e701b6.png",

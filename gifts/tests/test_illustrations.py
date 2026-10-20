@@ -90,7 +90,7 @@ class CatalogTests(SimpleTestCase):
         for name in ["Presente", "B07WGQ64QR", "Kit panelas e liquidificador", "Porta talheres",
                      "Copo para liquidificador", "Toalhas de mesa", "Jogo de toalhas de mesa",
                      "Cafeteira italiana", "Chaleira", "Panela de pressão", "Porta-talher",
-                     "Porta de talheres", "Porta de talher", "Talher", "Toalhas de praia",
+                     "Porta de talheres", "Porta de talher", "Toalhas de praia",
                      "Toalhas de piscina", "Toalhas de boca", "Toalhas de papel", "Toalhas de cozinha",
                      "Toalhas de prato", "Porta-toalhas", "Suporte para toalhas", "Varal de toalhas",
                      "jogo de talher e toalhas"]:

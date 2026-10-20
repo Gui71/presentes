@@ -24,6 +24,7 @@ class PreserveDataMigrationTests(TransactionTestCase):
             current=CurrentProduct.objects.get(pk=product.pk)
             self.assertEqual(current.name,'Preservar');self.assertEqual(current.image.name,'products/keep.webp');self.assertEqual(current.revision,0)
             self.assertEqual(current.illustration_key,'');self.assertEqual(current.illustration_digest,'')
+            self.assertEqual(current.illustration_choice,'')
             self.assertEqual(current.links.get().url,'https://shop.example/keep')
             self.assertEqual(CurrentSelection.objects.get(pk=choice.pk).owner_digest,'keep-owner')
             manager=get_user_model().objects.get(pk=user.pk)

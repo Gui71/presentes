@@ -6,27 +6,31 @@ O site lê arquivos locais: não gera novas imagens, não consulta lojas, não e
 
 ## Usar no painel
 
-1. Cadastre nome e links de compra. Um nome reconhecido recebe uma ilustração do catálogo; links curtos ou indisponíveis não interferem.
-2. Para um item antigo sem imagem, use **Usar ilustração**. Para substituir uma imagem, use **Rever ilustração**.
-3. Confira o nome e a prévia. Só **Usar esta ilustração** confirma a troca. A imagem anterior permanece até a operação concluir.
+1. Cadastre nome e links de compra. Deixe **Ilustração (opcional)** em **Automática pelo nome** ou selecione um objeto pelos nomes genéricos do catálogo. Ao salvar, a imagem escolhida aparece no card; links curtos ou indisponíveis não interferem.
+2. Em item existente, use **Usar ilustração**, **Escolher ilustração** (se o nome não for reconhecido) ou **Rever ilustração** (se já houver imagem).
+3. O seletor lista somente os nomes dos objetos. Escolha um e clique em **Ver prévia**. Só **Usar esta ilustração** confirma a aplicação. A imagem anterior permanece até a operação concluir.
 
 A ação exige conta ativa, `gifts.view_product` e `gifts.change_product`, além de POST/CSRF. A atribuição inicial faz parte do cadastro autorizado por `add_product`. Trocar apenas a imagem não muda nome, links ou seleção. Edição/exclusão do presente continuam bloqueadas enquanto houver escolha ativa. A lista fornecida para criar o catálogo não foi inserida no banco como presentes ou quantidades.
 
-O painel mostra se há ilustração compatível, se uma imagem anterior foi preservada ou se o nome mudou e exige revisão. Falhas preservam o cadastro e a imagem anterior ou padrão. Repetir uma aplicação concluída reutiliza o arquivo. Não há botão “Gerar novamente”, pois o site não oferece geração online.
+Uma escolha manual tem prioridade sobre o nome e fica salva, inclusive após editar nome/links ou reiniciar o app. A edição de nome/links mantém a imagem e não muda essa escolha; use **Rever ilustração** para trocá-la. Para voltar ao reconhecimento pelo nome, selecione **Automática pelo nome**, confira a prévia e confirme. Se não houver correspondência automática, a escolha e a imagem anteriores são preservadas.
+
+O painel mostra se há ilustração compatível, escolhida manualmente, se uma imagem anterior foi preservada ou se o nome mudou no modo automático e exige revisão. Falhas preservam o cadastro e a imagem anterior ou padrão. Repetir uma aplicação concluída reutiliza o arquivo. Não há botão “Gerar novamente”, pois o site não oferece geração online.
 
 As artes têm legenda **Imagem ilustrativa gerada por IA**. Confira marca, modelo, cor, acessórios e quantidade exatos nos anúncios. Uma arte pode ilustrar itens distintos do mesmo tipo sem unir seus registros ou reservas.
 
 ## Correspondência, segurança e persistência
 
-`gifts/illustrations/catalog.json` registra chave, nome, aliases, exclusões, SHA-256, descrição visual e origem dos arquivos. A comparação ignora acentos, maiúsculas e pontuação, usando palavras/frases completas. O nome é a única referência; não há scraping nem interpretação da URL por IA.
+`gifts/illustrations/catalog.json` registra chave, nome, aliases, exclusões, SHA-256, descrição visual e origem dos arquivos. A comparação ignora acentos, maiúsculas/minúsculas (inclusive misturadas), pontuação e preposições de ligação, e reconhece as flexões singular/plural dos objetos e qualificadores do catálogo. Continua usando palavras/frases completas; não há scraping nem interpretação da URL por IA.
 
-Nomes vagos como “Presente”, códigos de anúncio, objetos não cobertos e nomes que correspondem a mais de um tipo ficam com a imagem padrão. “Kit panelas e liquidificador” não escolhe arbitrariamente um deles. Variantes e peças não cobertas também são recusadas, por exemplo “Copo para liquidificador”, “Toalhas de mesa” e “Cafeteira italiana”. Essa correspondência é uma regra limitada de catálogo, não compreensão geral de qualquer descrição.
+Por exemplo, **panela**, **PANELAS** e **PaNeLa** reconhecem o tipo genérico de panelas; **panela de pipoca** prioriza a pipoqueira específica. **copo/copos**, **prato/pratos**, **talher/talheres**, **açucareiro/acucareiros** e os demais tipos possuem variações testadas. Marcas, quantidades e cores complementares não precisam coincidir com os aliases.
+
+Nomes vagos como “Presente”, códigos de anúncio, objetos não cobertos e nomes que correspondem a mais de um tipo ficam com a imagem padrão e permitem escolha manual. “Kit panelas e liquidificador” não escolhe arbitrariamente um deles. Variantes e peças não cobertas também são recusadas no modo automático, por exemplo “Copo para liquidificador”, “Toalhas de mesa” e “Cafeteira italiana”. Flexões conhecidas são tratadas; erros de digitação arbitrários, sinônimos não cadastrados e objetos ausentes não têm reconhecimento garantido. Nesses casos, o seletor permite escolher uma das artes existentes sem depender do nome.
 
 Fontes em `gifts/illustrations/assets/` são incluídas pelo `COPY gifts` do Dockerfile e não têm uma rota pública de diretório. São WebP não animados, até 1.000 px, sem metadados do PNG original. Antes da aplicação, validamos hash, tamanho máximo de 1 MiB, formato real e dimensões. O navegador não escolhe arquivo, caminho ou endpoint.
 
-O banco guarda chave/hash de origem e o caminho da cópia em `MEDIA_ROOT`. Essa cópia continua servida pela view Django protegida; o Caddy não expõe `/media/`. O snapshot `.db` não inclui imagens: preserve mídia, banco e configuração privada no backup. Recriar containers mantém a mídia no volume `app_media`.
+O banco guarda a preferência manual (`illustration_choice`, vazia no modo automático), chave/hash da arte aplicada e o caminho da cópia em `MEDIA_ROOT`. A escolha aceita somente chaves do catálogo validado; caminhos, URLs e valores desconhecidos são recusados no backend. Essa cópia continua servida pela view Django protegida; o Caddy não expõe `/media/`. O snapshot `.db` não inclui imagens: preserve mídia, banco e configuração privada no backup. Recriar containers mantém a mídia no volume `app_media`.
 
-A migration acrescenta metadados vazios às imagens anteriores, sem alterá-las. Edições preservam arquivos válidos; mudar só links não refaz a imagem. Uma edição/exclusão concorrente invalida a aplicação antiga pela versão do produto, sem recriar registros. Arquivos antigos só são removidos após commit e arquivos novos sem referência são limpos em falha.
+A migration `0006_product_illustration_choice` acrescenta a preferência vazia aos presentes anteriores, sem alterar imagens, links ou reservas. Execute `python manage.py migrate --noinput` na atualização controlada do servidor. Edições preservam arquivos válidos; mudar só links não refaz a imagem. Uma edição/exclusão concorrente invalida a aplicação antiga pela versão do produto, sem recriar registros. Arquivos antigos só são removidos após commit e arquivos novos sem referência são limpos em falha.
 
 Verificação local, sem alterar presentes:
 
@@ -34,6 +38,7 @@ Verificação local, sem alterar presentes:
 python manage.py check_illustrations
 python manage.py check_illustrations --name "jogo de talher"
 python manage.py check_illustrations --name "toalhas"
+python manage.py check_illustrations --name "panela"
 python manage.py test --noinput
 ```
 
@@ -48,7 +53,7 @@ Sem `--name`, o comando valida apenas os arquivos do catálogo; isso não garant
 
 Após atualizar o código ou os aliases, reconstrua a imagem Docker e recrie o app conforme o guia de atualização em [DEPLOY-DOCKER-ORACLE.md](DEPLOY-DOCKER-ORACLE.md). Fora do Docker, reinicie os processos Django/Gunicorn: o catálogo e as correspondências ficam em cache por processo. `collectstatic` sozinho não atualiza essas regras.
 
-Para presentes já cadastrados sem imagem, abra o painel, clique em **Usar ilustração**, confira a prévia e confirme. Novos cadastros com nomes reconhecidos recebem a ilustração automaticamente. Migrations, inicialização e visitas públicas não aplicam imagens antigas em massa.
+Para presentes já cadastrados sem imagem, abra o painel, clique em **Usar ilustração** ou **Escolher ilustração**, confira a prévia e confirme. Novos cadastros com nomes reconhecidos ou escolha manual recebem a ilustração ao salvar. Migrations, inicialização e visitas públicas não aplicam imagens antigas em massa.
 
 ## Incluir novos objetos
 
@@ -72,13 +77,13 @@ O catálogo entrega imagens reais geradas nesta conversa e operação local sem 
 
 | Objeto | Exemplos de nome reconhecido |
 | --- | --- |
-| Talheres | faqueiro, talheres, jogo de talher, kit de talher |
+| Talheres | faqueiro, talher, talheres, jogo de talher, kit de talher |
 | Kit de toalhas | kit toalha, kit toalhas, toalhas, jogo de toalha |
-| Pratos | pratos, aparelho de jantar |
-| Copos | copos |
+| Pratos | prato, pratos, aparelho de jantar |
+| Copos | copo, copos |
 | Chaleira elétrica | chaleira eletrica |
 | Liquidificador | liquidificador |
-| Kit de panelas | kit panelas, kit de panelas |
+| Kit de panelas | panela, panelas, kit panelas, kit de panelas |
 | Frigideira | frigideira |
 | Leiteira | leiteira |
 | Pipoqueira | pipoqueira, panela de pipoca |

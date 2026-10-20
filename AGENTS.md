@@ -26,7 +26,7 @@ Preferir Django 5.2 LTS com patch de segurança atualizado e Python compatível,
 - Exibir três cards por linha no desktop, duas no tablet e um no celular.
 - Cadastro de presentes: somente superusuário e usuários ativos autorizados explicitamente no backend.
 - Manter o painel próprio para cadastro; Django admin fica para administração geral e concessão de acessos.
-- O formulário do item contém apenas Nome do produto e Inserir link do anúncio, repetível por + outro link. Não adicionar campos de preço, descrição, categoria ou upload de foto.
+- O formulário do item contém Nome do produto, Inserir link do anúncio (repetível por + outro link) e o seletor opcional de ilustração do catálogo autorizado pelo usuário. Não adicionar campos de preço, descrição, categoria ou upload de foto.
 - Ilustrações são geradas na conversa e reutilizadas de um catálogo local, conforme escolha explícita de custo zero. Não integrar API paga nem extrair fotos dos links no cadastro/edição.
 - Nunca expor credenciais, sessões, nomes de visitantes ou detalhes internos desnecessários nas respostas públicas.
 - Versionar .env.example; ignorar .env e arquivos locais com segredos.
@@ -53,7 +53,8 @@ Preferir Django 5.2 LTS com patch de segurança atualizado e Python compatível,
 
 ## Links externos e ilustrações
 
-- Usar somente o nome cadastrado para correspondência explícita no catálogo local. Não buscar páginas das lojas, interpretar URLs opacas ou enviar dados a provedores de geração. Nome desconhecido, ambíguo ou variante não coberta usa imagem padrão e aviso útil.
+- Usar o nome cadastrado para correspondência no catálogo local, normalizando maiúsculas, acentos, pontuação e flexões controladas dos objetos conhecidos. Dar prioridade ao objeto específico dentro da mesma expressão; objetos distintos no nome continuam ambíguos. Não buscar páginas das lojas, interpretar URLs opacas ou enviar dados a provedores de geração. Nome desconhecido, ambíguo ou variante não coberta usa imagem padrão e oferece escolha manual no catálogo.
+- O seletor mostra somente nomes genéricos e aceita apenas chaves do manifesto validado. A escolha manual tem prioridade sobre o nome, persiste no banco e é preservada ao editar nome/links. No cadastro, exige view_product + add_product; em item existente, exige view_product + change_product, prévia e confirmação POST/CSRF com revisão atual. Não aceitar caminhos, uploads ou URLs como escolha. Voltar ao automático também exige confirmação; sem correspondência, preservar a imagem e a escolha anteriores.
 - As ilustrações foram geradas com a ferramenta de imagens da OpenAI na conversa, sem API em runtime. Novos objetos precisam de inclusão manual, revisão e atualização versionada do catálogo. Não simular geração online, fila ou status gerando.
 - Preservar imagens válidas existentes até substituição explícita com prévia, permissão e POST/CSRF. A lista enviada pelo usuário define os objetos do catálogo; não é autorização para criar presentes reais ou duplicar suas quantidades.
 - Validar esquema HTTP/HTTPS, hostname e porta. Bloquear credenciais na URL, localhost, redes privadas, loopback, link-local, metadados de nuvem e demais destinos não públicos, em IPv4 e IPv6.
