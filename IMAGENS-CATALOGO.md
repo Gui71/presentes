@@ -32,6 +32,8 @@ Verificação local, sem alterar presentes:
 
 ```bash
 python manage.py check_illustrations
+python manage.py check_illustrations --name "jogo de talher"
+python manage.py check_illustrations --name "toalhas"
 python manage.py test --noinput
 ```
 
@@ -39,9 +41,14 @@ No Docker:
 
 ```bash
 sudo docker compose run --rm --no-deps app python manage.py check_illustrations
+sudo docker compose run --rm --no-deps app python manage.py check_illustrations --name "toalhas"
 ```
 
-Migrations, inicialização e visitas públicas não aplicam imagens antigas em massa.
+Sem `--name`, o comando valida apenas os arquivos do catálogo; isso não garante que qualquer nome cadastrado tenha correspondência. Com `--name`, ele também mostra a ilustração reconhecida e retorna erro se o nome for desconhecido ou ambíguo. Nenhuma das opções altera presentes.
+
+Após atualizar o código ou os aliases, reconstrua a imagem Docker e recrie o app conforme o guia de atualização em [DEPLOY-DOCKER-ORACLE.md](DEPLOY-DOCKER-ORACLE.md). Fora do Docker, reinicie os processos Django/Gunicorn: o catálogo e as correspondências ficam em cache por processo. `collectstatic` sozinho não atualiza essas regras.
+
+Para presentes já cadastrados sem imagem, abra o painel, clique em **Usar ilustração**, confira a prévia e confirme. Novos cadastros com nomes reconhecidos recebem a ilustração automaticamente. Migrations, inicialização e visitas públicas não aplicam imagens antigas em massa.
 
 ## Incluir novos objetos
 
@@ -65,8 +72,8 @@ O catálogo entrega imagens reais geradas nesta conversa e operação local sem 
 
 | Objeto | Exemplos de nome reconhecido |
 | --- | --- |
-| Talheres | faqueiro, talheres |
-| Kit de toalhas | kit toalha, kit toalhas |
+| Talheres | faqueiro, talheres, jogo de talher, kit de talher |
+| Kit de toalhas | kit toalha, kit toalhas, toalhas, jogo de toalha |
 | Pratos | pratos, aparelho de jantar |
 | Copos | copos |
 | Chaleira elétrica | chaleira eletrica |
