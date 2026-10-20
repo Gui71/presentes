@@ -32,7 +32,8 @@ Preferir Django 5.2 LTS com patch de segurança atualizado e Python compatível,
 - Versionar .env.example; ignorar .env e arquivos locais com segredos.
 - Versionar o requirements.txt com todas as bibliotecas necessárias, vou rodar o sistema no meu servidor na nuvem, então já deixe preparado para tal.
 - Não apagar dados, reescrever histórico, alterar infraestrutura ou publicar sem autorização específica.
-- Nome dos anfitriões "Guilherme" e "Beatriz", endereço ainda sem, data 22/11/2026.
+- Exibir os anfitriões na ordem "Beatriz & Guilherme" (ou "Beatriz e Guilherme" em frases), endereço ainda sem, data 22/11/2026.
+- Manter o comentário de copyright/desenvolvimento fornecido pelo usuário no início de todo HTML próprio, inclusive includes e subdiretórios. Conforme esclarecimento do usuário, os créditos visíveis de copyright/desenvolvimento ficam em todas as páginas, inclusive administração; preservar os textos literais. A abertura visual da lista usa imagem local, zoom suave, opção de pular e duração curta; movimento reduzido, JavaScript indisponível ou falha da imagem não podem bloquear a identificação nem a lista.
 - Um item ao ser selecionado e confirmado pela pessoa deve ficar no final da lista esmaecido com um texto cinza "Já selecionado", não permitindo duplicidade.
 - A mesma pessoa pode selecionar mais de um item, deixe isso explicito no topo da lista de presentes.
 
