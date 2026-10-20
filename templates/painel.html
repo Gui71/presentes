@@ -1,0 +1,22 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}Organizar presentes · Casa nova{% endblock %}
+{% block navigation %}<form action="{% url 'logout' %}" method="post">{% csrf_token %}<button type="submit" class="text-button">Sair</button></form>{% endblock %}
+{% block content %}<section class="panel wrap" aria-labelledby="painel-titulo">
+  <div class="section-heading"><div><p class="eyebrow">Área dos anfitriões</p><h1 id="painel-titulo">Um lar, detalhe por detalhe.</h1><p>Organize aqui os presentes do nosso novo cantinho.</p></div><button class="button primary" type="button" data-open="product-modal">+ Adicionar novo item</button></div>
+  <div class="product-grid">{% for product in products %}{% include 'includes/card.html' %}{% empty %}<div class="empty-state"><img src="{% static 'images/house.svg' %}" width="48" height="48" alt=""><h2>A lista começa com um detalhe</h2><p>Adicione o primeiro presente com o nome e os links dos anúncios.</p></div>{% endfor %}</div>
+  <section class="selections" aria-labelledby="escolhas-titulo"><p class="eyebrow">Somente para os gestores</p><h2 id="escolhas-titulo">Escolhas confirmadas</h2><p class="form-hint">Os nomes são informados pelos convidados; não comprovam identidade.</p><ul class="selection-list">{% for product in products %}{% if product.is_selected %}<li><div><strong>{{ product.name }}</strong><span>{{ product.selection.first_name }} {{ product.selection.surname }}</span></div>{% if can_cancel_selections %}<form method="post" action="{% url 'cancel_selection_manager' product.pk %}">{% csrf_token %}<button type="submit" class="button secondary" data-cancel-manager>Cancelar escolha</button></form>{% endif %}</li>{% endif %}{% endfor %}</ul></section>
+</section>
+<dialog id="product-modal" class="modal product-modal" aria-labelledby="produto-titulo" {% if open_product_modal %}open{% endif %}>
+  <div class="modal-heading"><div><p class="eyebrow">Para o nosso cantinho</p><h2 id="produto-titulo">Adicionar novo item</h2></div><button class="icon-button" type="button" data-close aria-label="Fechar cadastro">×</button></div>
+  <form action="{% url 'create_product' %}" method="post" data-loading="Salvando e buscando a foto…" id="product-form">{% csrf_token %}<input type="hidden" name="submission_key" value="{{ submission_key }}">
+    <div class="field"><label for="{{ product_form.name.id_for_label }}">Nome do produto</label>{{ product_form.name }}{% for error in product_form.name.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}</div>
+    {{ link_forms.management_form }}
+    {% if link_forms.non_form_errors %}<div class="field-error" role="alert">{{ link_forms.non_form_errors }}</div>{% endif %}
+    <div id="link-fields">{% for form in link_forms %}<div class="link-row"><div class="field"><label for="{{ form.url.id_for_label }}">Inserir link do anúncio{% if not forloop.first %} {{ forloop.counter }}{% endif %}</label>{{ form.url }}{% for error in form.url.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}</div>{% if not forloop.first %}<button type="button" class="remove-link" aria-label="Remover este link">Remover</button>{% endif %}</div>{% endfor %}</div>
+    <template id="link-template"><div class="link-row"><div class="field"><label for="id_links-__prefix__-url">Inserir link do anúncio</label><input type="url" name="links-__prefix__-url" id="id_links-__prefix__-url" maxlength="2048" placeholder="https://…" required></div><button type="button" class="remove-link" aria-label="Remover este link">Remover</button></div></template>
+    <button type="button" class="text-button add-link" id="add-link">+ outro link</button>
+    <p class="form-hint">Tentamos obter a foto na ordem dos links. Se não for possível, o presente será salvo com uma imagem padrão.</p>
+    <p class="form-status" role="status" aria-live="polite"></p>
+    <div class="form-actions"><button type="button" class="button secondary" data-close>Cancelar</button><button type="submit" class="button primary">Salvar presente</button></div>
+  </form>
+</dialog>{% endblock %}

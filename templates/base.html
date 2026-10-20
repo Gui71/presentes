@@ -1,0 +1,24 @@
+{% load static %}<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#294d42">
+  <title>{% block title %}Chá de casa nova · Guilherme e Beatriz{% endblock %}</title>
+  <link rel="icon" href="{% static 'images/house.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+  <script src="{% static 'js/site.js' %}" defer></script>
+</head>
+<body>
+  <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
+  <header class="site-header">
+    <a href="{% url 'catalog' %}" class="brand"><img src="{% static 'images/house.svg' %}" width="32" height="32" alt=""><span>nosso novo lar<span class="brand-sub">Guilherme &amp; Beatriz</span></span></a>
+    <nav aria-label="Principal"><a href="{% url 'catalog' %}">Lista de presentes</a>{% block navigation %}<a class="subtle-link" href="{% url 'login' %}">Área dos anfitriões</a>{% endblock %}</nav>
+  </header>
+  <main id="conteudo">
+    {% if messages %}<div class="messages wrap" aria-live="polite">{% for message in messages %}<p class="notice {{ message.tags }}">{{ message }}</p>{% endfor %}</div>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer"><span>Um novo endereço. Muitas histórias para viver.</span><span>Com carinho, Guilherme e Beatriz.</span></footer>
+</body>
+</html>
