@@ -19,6 +19,7 @@ def boolean(name, default=False):
 def csv(name, default=""):
     return [part.strip() for part in os.getenv(name, default).split(",") if part.strip()]
 
+TRUSTED_PROXY_IPS = csv("TRUSTED_PROXY_IPS")
 
 APP_ENV = os.getenv("APP_ENV", "production")
 if APP_ENV not in {"development", "production", "test"}:
