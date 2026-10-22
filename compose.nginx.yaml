@@ -1,0 +1,48 @@
+name: presentes
+
+services:
+    app:
+        build:
+            context: .
+            target: app
+        env_file: .env
+        environment:
+            APP_ENV: production
+            DEBUG: "false"
+            GUNICORN_CMD_ARGS: "--no-control-socket"
+            SITE_DOMAIN: ${SITE_DOMAIN}
+            ALLOWED_HOSTS: ${SITE_DOMAIN}
+            CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS}
+            DATABASE_PATH: /var/lib/presentes/db/presentes.sqlite3
+            MEDIA_ROOT: /var/lib/presentes/media
+            STATIC_ROOT: /opt/static
+            TEST_DATABASE_PATH: /tmp/presentes-tests.sqlite3
+            TRUST_PROXY_HTTPS: "true"
+            NO_PROXY: app,localhost,127.0.0.1,::1
+            no_proxy: app,localhost,127.0.0.1,::1
+        ports:
+            - "127.0.0.1:49171:8000"
+        volumes:
+            - app_database:/var/lib/presentes/db
+            - app_media:/var/lib/presentes/media
+        read_only: true
+        tmpfs:
+            - "/tmp:rw,noexec,nosuid,size=256m"
+        cap_drop: [ALL]
+        security_opt: ["no-new-privileges:true"]
+        restart: unless-stopped
+        logging:
+            driver: json-file
+            options:
+                max-size: "10m"
+                max-file: "3"
+        healthcheck:
+            test: ["CMD", "python", "-c", "import os,urllib.request; r=urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8000/healthz/',headers={'Host':os.environ['SITE_DOMAIN']}),timeout=4); assert r.status==200 and r.read()==b'ok'"]
+            interval: 30s
+            timeout: 5s
+            retries: 3
+            start_period: 15s
+
+volumes:
+    app_database:
+    app_media:
