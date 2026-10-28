@@ -132,6 +132,30 @@ class IllustrationChoiceTests(TestCase):
         self.assertTrue(self.product.has_available_image)
         self.assertContains(self.client.get(reverse("panel")), reverse("product_image", args=[self.product.pk]))
 
+    def test_fifteen_added_illustrations_are_selectable_and_preview_without_modifying_products(self):
+        keys = {
+            "oven_mitts", "corkscrew", "bottle_opener", "can_opener", "closet_organizers",
+            "vegetable_cutter", "pressure_cooker", "broom_squeegee_dustpan",
+            "double_wall_coffee_cups", "vacuum_cleaner", "dish_drying_mat", "toilet_brush",
+            "steel_grater", "clothes_hangers", "air_fryer",
+        }
+        before = self.state()
+        count = Product.objects.count()
+        page = self.client.get(reverse("panel"))
+        choices = dict(page.context["product_form"].fields["illustration_choice"].choices)
+        with patch("socket.create_connection", side_effect=AssertionError("No network")):
+            for item in catalog():
+                if item.key not in keys:
+                    continue
+                with self.subTest(key=item.key):
+                    self.assertEqual(choices[item.key], item.label)
+                    response = self.client.get(self.preview, {"illustration_choice": item.key})
+                    self.assertEqual(response.status_code, 200)
+                    self.assertEqual(b"".join(response.streaming_content), read_illustration(item))
+        self.assertEqual(self.state(), before)
+        self.assertEqual(Product.objects.count(), count)
+        self.assertEqual(self.files(), [])
+
     def test_previous_image_and_mode_remain_until_explicit_replacement(self):
         apply_illustration(self.product.pk, 0)
         original = self.state()

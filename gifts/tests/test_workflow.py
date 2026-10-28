@@ -31,6 +31,13 @@ class WorkflowTests(TestCase):
         self.assertEqual(response.context["products"], [])
         self.assertTrue(response["Cache-Control"].find("no-store") >= 0)
 
+    def test_invitation_has_only_supplied_time_colors_and_purchase_guidance(self):
+        self.identify()
+        response = self.client.get(reverse("catalog"))
+        self.assertContains(response, '<time datetime="2026-11-22T15:00:00-03:00">22 de novembro de 2026, às 15h</time>', html=True)
+        self.assertContains(response, "Cores: branco, preto, cinza claro, cinza escuro, bege, marrom e transparente.")
+        self.assertContains(response, "Os links de compra no site são apenas referências: fique à vontade para comprar onde preferir.")
+
     def test_identification_validates_and_survives_refresh_without_publishing_name(self):
         response = self.client.post(reverse("identify"), {"first_name": " ", "surname": ""})
         self.assertEqual(response.status_code, 400)

@@ -17,6 +17,13 @@ MAX_ASSET_BYTES = 1024 * 1024
 # Vocabulário fechado dos objetos do catálogo: não é um stemmer de português.
 # Só estas flexões são equivalentes; palavras desconhecidas não são aproximadas.
 _PLURALS = {
+    "abridores": "abridor", "armarios": "armario", "aspiradores": "aspirador",
+    "cabides": "cabide", "caixas": "caixa", "caixinhas": "caixinha", "cortadores": "cortador",
+    "duplos": "duplo", "duplas": "dupla", "escovas": "escova", "escorredoras": "escorredora",
+    "esteiras": "esteira", "fornos": "forno", "garrafas": "garrafa", "latas": "lata",
+    "loucas": "louca", "luvas": "luva", "organizadores": "organizador", "organizadoras": "organizadora",
+    "paredes": "parede", "raladores": "ralador", "rolhas": "rolha", "sanitarias": "sanitaria",
+    "termicas": "termica", "vassouras": "vassoura", "xicaras": "xicara",
     "aparelhos": "aparelho", "acucareiros": "acucareiro", "aguas": "agua",
     "bacias": "bacia", "baldes": "balde", "banheiros": "banheiro",
     "batedeiras": "batedeira", "batedores": "batedor", "bocas": "boca",
