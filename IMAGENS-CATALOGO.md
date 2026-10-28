@@ -1,6 +1,8 @@
 # Ilustrações locais, sem API paga
 
-O usuário escolheu **gerar ilustrações nesta conversa com ChatGPT/Codex e reutilizá-las no site**. O catálogo contém 47 imagens genéricas produzidas nesta tarefa com a ferramenta de imagens da OpenAI. A ferramenta não informou o identificador do modelo; não atribuímos um nome não verificado.
+O usuário escolheu **gerar ilustrações nesta conversa com ChatGPT/Codex e reutilizá-las no site**. O catálogo contém 62 imagens genéricas: as 47 artes anteriores produzidas com a ferramenta de imagens da OpenAI e 15 PNGs fornecidos pelo usuário em `15imagensnovassite.zip`, reaproveitados em 28/10/2026. Não houve nova geração nem chamada de API para esta ampliação. Não atribuímos um modelo de geração não verificado.
+
+As 15 imagens anexadas foram revisadas visualmente e convertidas para WebP de até 1.000 px, sem alterar o conteúdo ilustrado. O manifesto preserva o nome e o SHA-256 de cada PNG de origem, além do hash do WebP. SHA-256 do ZIP: `81c0a219a17c91a012466d3775a7b9331031c87f2e7c6cb40de9f0793ea58940`. As 47 fontes anteriores permanecem intactas. Esta atualização acrescenta apenas opções ao catálogo e ao seletor: nenhum presente, imagem aplicada ou reserva existente é alterado automaticamente.
 
 O site lê arquivos locais: não gera novas imagens, não consulta lojas, não envia dados ao provedor e não executa inferência na VM. Não há chave, créditos, cobrança de API, fila, worker ou thread de geração. Criar novas artes no ChatGPT/Codex segue os limites do plano do usuário.
 
@@ -22,7 +24,7 @@ As artes têm legenda **Imagem ilustrativa gerada por IA**. Confira marca, model
 
 `gifts/illustrations/catalog.json` registra chave, nome, aliases, exclusões, SHA-256, descrição visual e origem dos arquivos. A comparação ignora acentos, maiúsculas/minúsculas (inclusive misturadas), pontuação e preposições de ligação, e reconhece as flexões singular/plural dos objetos e qualificadores do catálogo. Continua usando palavras/frases completas; não há scraping nem interpretação da URL por IA.
 
-Por exemplo, **panela**, **PANELAS** e **PaNeLa** reconhecem o tipo genérico de panelas; **panela de pipoca** prioriza a pipoqueira específica. **copo/copos**, **prato/pratos**, **talher/talheres**, **açucareiro/acucareiros** e os demais tipos possuem variações testadas. Marcas, quantidades e cores complementares não precisam coincidir com os aliases.
+Por exemplo, **panela**, **PANELAS** e **PaNeLa** reconhecem o tipo genérico de panelas; **panela de pipoca** prioriza a pipoqueira específica e **panela de pressão** prioriza a nova arte própria. **copo/copos**, **prato/pratos**, **talher/talheres**, **açucareiro/acucareiros** e os demais tipos possuem variações testadas. Marcas, quantidades e cores complementares não precisam coincidir com os aliases.
 
 Nomes vagos como “Presente”, códigos de anúncio, objetos não cobertos e nomes que correspondem a mais de um tipo ficam com a imagem padrão e permitem escolha manual. “Kit panelas e liquidificador” não escolhe arbitrariamente um deles. Variantes e peças não cobertas também são recusadas no modo automático, por exemplo “Copo para liquidificador”, “Toalhas de mesa” e “Cafeteira italiana”. Flexões conhecidas são tratadas; erros de digitação arbitrários, sinônimos não cadastrados e objetos ausentes não têm reconhecimento garantido. Nesses casos, o seletor permite escolher uma das artes existentes sem depender do nome.
 
@@ -124,3 +126,18 @@ O catálogo entrega imagens reais geradas nesta conversa e operação local sem 
 | Sanduicheira | sanduicheira |
 | Ferro de passar | ferro de passar |
 | Mini máquina de waffle | maquina de waffle, mini maquina de waffle |
+| Par de Luvas Térmicas de Forno | luvas térmicas de forno, luvas de forno |
+| Saca Rolhas | saca rolhas, saca-rolhas, sacarrolhas |
+| Abridor de Garrafas | abridor de garrafa, abridores de garrafas |
+| Abridor de Latas | abridor de lata, abridores de latas |
+| Organizador de Armário (caixinhas) | organizador de armário, caixas organizadoras de armário |
+| Cortador de Legumes | cortador de legumes, cortadores de legumes |
+| Panela de Pressão | panela de pressão, panelas de pressão |
+| Kit Vassoura/Rodo/Pá | kit vassoura/rodo/pá, kit de vassoura rodo e pá de lixo |
+| Xícaras de Café Vidro Duplo | xícara de café vidro duplo, xícaras de café de parede dupla |
+| Aspirador de Pó | aspirador de pó, aspiradores de pó |
+| Esteira Escorredor de Louças | esteira escorredor de louças, tapete escorredor de louças |
+| Escova Sanitária | escova sanitária, escovas sanitárias |
+| Ralador Inox | ralador inox, ralador de aço inox |
+| Cabides de Roupa | cabides de roupa, cabides |
+| Air fryer | air fryer, airfryer, fritadeira sem óleo |

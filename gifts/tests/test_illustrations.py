@@ -89,7 +89,7 @@ class CatalogTests(SimpleTestCase):
     def test_unknown_ambiguous_parts_and_unrelated_variants_do_not_get_random_illustrations(self):
         for name in ["Presente", "B07WGQ64QR", "Kit panelas e liquidificador", "Porta talheres",
                      "Copo para liquidificador", "Toalhas de mesa", "Jogo de toalhas de mesa",
-                     "Cafeteira italiana", "Chaleira", "Panela de pressão", "Porta-talher",
+                     "Cafeteira italiana", "Chaleira", "Panela de pressão elétrica", "Porta-talher",
                      "Porta de talheres", "Porta de talher", "Toalhas de praia",
                      "Toalhas de piscina", "Toalhas de boca", "Toalhas de papel", "Toalhas de cozinha",
                      "Toalhas de prato", "Porta-toalhas", "Suporte para toalhas", "Varal de toalhas",

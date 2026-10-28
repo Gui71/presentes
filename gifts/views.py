@@ -28,7 +28,7 @@ def visitor_owner(request):
 
 def products_for(owner=None):
     selected = Selection.objects.filter(product=OuterRef("pk"))
-    return Product.objects.prefetch_related("links").annotate(
+    return Product.objects.select_related("selection").prefetch_related("links").annotate(
         is_selected=Exists(selected), is_mine=Exists(selected.filter(owner_digest=owner or "")),
     ).order_by("is_selected", "-created_at", "pk")
 

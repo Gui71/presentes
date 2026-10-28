@@ -51,18 +51,28 @@ class ManagementTests(TestCase):
         self.assertEqual(Client().get('/login').status_code,301)
         self.assertEqual(Client().get('/login/').status_code,200)
 
-    def test_selected_cards_remove_all_purchase_and_selection_links_and_restore_after_cancel(self):
+    def test_selected_cards_keep_purchase_links_but_prevent_new_choices(self):
         guest=Client();guest.post(reverse('identify'),{'first_name':'Ana','surname':'Silva'})
         guest.post(reverse('choose_product',args=[self.product.pk]))
         page=guest.get('/')
-        self.assertNotContains(page,'https://shop.example/')
+        for url in ('https://shop.example/first','https://shop.example/second'):
+            self.assertContains(page, 'href="'+url+'" target="_blank" rel="noopener noreferrer"')
+        self.assertContains(page,'class="product-card selected"')
         self.assertNotContains(page,'data-choose')
         self.assertContains(page,'Cancelar minha escolha')
         other=Client();other.post(reverse('identify'),{'first_name':'Ana','surname':'Silva'})
-        self.assertNotContains(other.get('/'),'https://shop.example/')
+        other_page=other.get('/')
+        self.assertContains(other_page,'https://shop.example/first')
+        self.assertContains(other_page,'https://shop.example/second')
+        self.assertNotContains(other_page,'data-choose')
+        self.assertNotContains(other_page,'Cancelar minha escolha')
+        other.post(reverse('choose_product',args=[self.product.pk]))
+        self.assertEqual(Selection.objects.filter(product=self.product).count(),1)
         guest.post(reverse('cancel_selection_visitor',args=[self.product.pk]))
         self.assertContains(other.get('/'),'https://shop.example/first')
         self.assertContains(other.get('/'),'https://shop.example/second')
+        self.assertContains(other.get('/'),'data-choose')
+        self.assertNotContains(other.get('/'),'class="product-card selected"')
 
     @patch('gifts.external.obtain_product_image')
     def test_edit_prefills_modal_updates_order_and_preserves_creator(self, obtain):

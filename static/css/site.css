@@ -123,6 +123,10 @@ img {
   gap:14px;
   font-size:1rem;
   font-weight:600}
+.event-colors {
+  max-width:640px;
+  margin:18px auto 0;
+  color:var(--muted)}
 .catalog,.panel {
   padding-bottom:72px}
 .section-heading {

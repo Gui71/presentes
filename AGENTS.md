@@ -28,11 +28,11 @@ Preferir Django 5.2 LTS com patch de segurança atualizado e Python compatível,
 - Manter o painel próprio para cadastro; Django admin fica para administração geral e concessão de acessos.
 - O formulário do item contém Nome do produto, Inserir link do anúncio (repetível por + outro link) e o seletor opcional de ilustração do catálogo autorizado pelo usuário. Não adicionar campos de preço, descrição, categoria ou upload de foto.
 - Ilustrações são geradas na conversa e reutilizadas de um catálogo local, conforme escolha explícita de custo zero. Não integrar API paga nem extrair fotos dos links no cadastro/edição.
-- Nunca expor credenciais, sessões, nomes de visitantes ou detalhes internos desnecessários nas respostas públicas.
+- Nunca expor credenciais, sessões ou detalhes internos desnecessários nas respostas públicas. Nos cards reservados, exibir em negrito o nome informado e somente a primeira palavra do sobrenome; os dados completos permanecem restritos aos gestores.
 - Versionar .env.example; ignorar .env e arquivos locais com segredos.
 - Versionar o requirements.txt com todas as bibliotecas necessárias, vou rodar o sistema no meu servidor na nuvem, então já deixe preparado para tal.
 - Não apagar dados, reescrever histórico, alterar infraestrutura ou publicar sem autorização específica.
-- Exibir os anfitriões na ordem "Beatriz & Guilherme" (ou "Beatriz e Guilherme" em frases), endereço ainda sem, data 22/11/2026.
+- Exibir os anfitriões na ordem "Beatriz & Guilherme" (ou "Beatriz e Guilherme" em frases), endereço ainda sem, data 22/11/2026 às 15h. Cores informadas: branco, preto, cinza claro, cinza escuro, bege, marrom e transparente. Incluir: “Os links de compra no site são apenas referências: fique à vontade para comprar onde preferir.”
 - Manter o comentário de copyright/desenvolvimento fornecido pelo usuário no início de todo HTML próprio, inclusive includes e subdiretórios. Conforme esclarecimento do usuário, os créditos visíveis de copyright/desenvolvimento ficam em todas as páginas, inclusive administração; preservar os textos literais. A abertura visual da lista usa imagem local, zoom suave, opção de pular e duração curta; movimento reduzido, JavaScript indisponível ou falha da imagem não podem bloquear a identificação nem a lista.
 - Um item ao ser selecionado e confirmado pela pessoa deve ficar no final da lista esmaecido com um texto cinza "Já selecionado", não permitindo duplicidade.
 - A mesma pessoa pode selecionar mais de um item, deixe isso explicito no topo da lista de presentes.
@@ -92,7 +92,7 @@ Entregar código, migrations, testes, requirements.txt, .env.example, .gitignore
 - Não mostrar atalho de login administrativo na interface pública; manter /login e /login/ acessíveis diretamente.
 - Exigir gifts.view_product para o painel e permissões separadas add_product, change_product e delete_product nas operações. Não conceder edição, exclusão ou exportação automaticamente a quem cadastra. A migration preserva o acesso de leitura dos gestores anteriores.
 - Bloquear edição e exclusão de presentes com escolha ativa, inclusive por chamada direta e em corrida com confirmação. Primeiro um gestor autorizado cancela a escolha. Não transferir nem apagar escolhas silenciosamente.
-- Cards selecionados inteiros ficam esmaecidos e sem âncoras/botões de compra; cancelamento legítimo fica fora do card. Cancelar restaura links e grupo de disponíveis.
+- Somente os cards selecionados ficam esmaecidos; os links de compra continuam clicáveis e abrem em nova aba com rel="noopener noreferrer". Novas reservas desses itens continuam bloqueadas. O cancelamento legítimo fica fora do card e restaura o grupo de disponíveis.
 - Editar mantém nome e links ordenados, preservando imagens existentes. Alterar apenas links não reprocessa imagem. Uma imagem ausente pode ser preenchida pelo catálogo; substituições usam Rever ilustração, prévia e confirmação explícita. Versão do item impede substituir após edição/exclusão concorrente; aplicar imagem não altera seleção.
 - Exportações exigem permissões específicas export_database e export_selections, inicialmente só superusuário. Usar POST/CSRF, attachment, no-store, temporários privados com limpeza; snapshot SQLite pela API backup, planilha só com nome+sobrenome e presente ativo, tudo como texto literal.
 - Tipografia em rem, base próxima de 18px e controles de pelo menos 16px; preservar cores, fundo e grade 3/2/1.

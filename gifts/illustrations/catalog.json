@@ -750,6 +750,246 @@
       "sha256": "e04cbbcab05f5170115b3efcef10dabf0a86d14e5e876c2d1f1ba0c49287fe18",
       "source_png": "exec-fa09eba7-75d5-4a1f-ade5-4fc032e701b6.png",
       "source_sha256": "f1fe5b7ff482889ce8feaabd6761d51cd8796f6e3c3608bdbf6c261f02f24586"
+    },
+    {
+      "key": "oven_mitts",
+      "label": "Par de Luvas Térmicas de Forno",
+      "aliases": [
+        "luvas termicas de forno",
+        "par de luvas termicas de forno",
+        "luvas de forno",
+        "luvas termicas"
+      ],
+      "exclude": [
+        "luva eletrica"
+      ],
+      "description": "A pair of gray quilted oven mitts.",
+      "sha256": "816736bdee13f89fd7cfc4616a57539bca61201f53e4fdab919bdd8cd9255a9c",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_36_09.png",
+      "source_sha256": "7f8f858e94d181799d975d17d43abf2ff670518b7756f995b4626977d3eeb45b"
+    },
+    {
+      "key": "corkscrew",
+      "label": "Saca Rolhas",
+      "aliases": [
+        "saca rolhas",
+        "sacarrolhas"
+      ],
+      "exclude": [],
+      "description": "A stainless-steel winged corkscrew with black grips.",
+      "sha256": "f15d9c0d1224d339fc1707f3ec2912c411b74a482d47cfbcaf4bade612260335",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_36_24.png",
+      "source_sha256": "1d3f6c7d84bb9f04c2ebc55fed5ca7888f4a873be4282caf633ee8c325baae59"
+    },
+    {
+      "key": "bottle_opener",
+      "label": "Abridor de Garrafas",
+      "aliases": [
+        "abridor de garrafas"
+      ],
+      "exclude": [
+        "abridor eletrico"
+      ],
+      "description": "A manual bottle opener with stainless-steel head and black handle.",
+      "sha256": "9121712e08a056c15f0227d86d30e40733f89f601444f9b984c78b3afe332798",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_36_30.png",
+      "source_sha256": "295819ab5f5c9fb03649236cc997cedbb301a44af0487b905797d6d55c9cb11f"
+    },
+    {
+      "key": "can_opener",
+      "label": "Abridor de Latas",
+      "aliases": [
+        "abridor de latas"
+      ],
+      "exclude": [
+        "abridor eletrico"
+      ],
+      "description": "A manual can opener with black handles.",
+      "sha256": "1b5f9acac6e278ae5afc7fda70649c08a1756f924b16941702428bcb3aefffb4",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_36_27.png",
+      "source_sha256": "45c612c1f4b1a25ad04dd83e4aa856eec448c23c03e0b39865d431f3ce588427"
+    },
+    {
+      "key": "closet_organizers",
+      "label": "Organizador de Armário (caixinhas)",
+      "aliases": [
+        "organizador de armario",
+        "caixinhas organizadoras de armario",
+        "caixas organizadoras de armario"
+      ],
+      "exclude": [],
+      "description": "Three neutral fabric closet storage boxes with front handles.",
+      "sha256": "f6f80d0d0fd2f0bc2eb7a0711a7842d7de073ad61f2c6c02c23a49ebbcf29297",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_36_34.png",
+      "source_sha256": "86f114bcfe96637f75d1ad74bc460d7ab8699273c89f512e7e9ef413346a7265"
+    },
+    {
+      "key": "vegetable_cutter",
+      "label": "Cortador de Legumes",
+      "aliases": [
+        "cortador de legumes"
+      ],
+      "exclude": [],
+      "description": "A manual push-down vegetable cutter with transparent collection box.",
+      "sha256": "1697b0c0514f30ce38f0a0376a99e0fabed5021f1b186abb1e2174c74935030a",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_36_36.png",
+      "source_sha256": "0bda03e89d5a2ec3ee78dc7c759b8d5d29d8bd8f6cc5631fa9596cba77fc7a78"
+    },
+    {
+      "key": "pressure_cooker",
+      "label": "Panela de Pressão",
+      "aliases": [
+        "panela de pressao"
+      ],
+      "exclude": [
+        "panela de pressao eletrica",
+        "tampa de panela",
+        "cabo de panela",
+        "suporte para panela"
+      ],
+      "description": "A stainless-steel stovetop pressure cooker with black handles.",
+      "sha256": "54439022de27118b2b6924311ca39ff9413c0f63249225eed1294a62a05286fa",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_36_44.png",
+      "source_sha256": "597564c1e8e9dc26e7f3790539279a0f145538d7ebd77886d02fb6cb47dc3d4e"
+    },
+    {
+      "key": "broom_squeegee_dustpan",
+      "label": "Kit Vassoura/Rodo/Pá",
+      "aliases": [
+        "kit vassoura rodo pa",
+        "kit vassoura rodo pa de lixo",
+        "kit de vassoura rodo e pa",
+        "kit vassoura rodo e pa de lixo"
+      ],
+      "exclude": [],
+      "description": "A gray household cleaning set with broom, floor squeegee and long-handled dustpan.",
+      "sha256": "2cbdd421b9b71860298889dc5bac6e5b8ad1ba519fbf7cfb17eab469206b2e22",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_36_51.png",
+      "source_sha256": "daf010f01b995047563de8b232e2049093fc273fe90ee14f0897f28f308077fe"
+    },
+    {
+      "key": "double_wall_coffee_cups",
+      "label": "Xícaras de Café Vidro Duplo",
+      "aliases": [
+        "xicaras de cafe vidro duplo",
+        "xicaras de vidro duplo",
+        "xicaras de cafe de parede dupla"
+      ],
+      "exclude": [],
+      "description": "Two transparent double-walled glass coffee cups with handles.",
+      "sha256": "edb39d079be191952cdc6ce25c313907f158fd2dc6608e9f425e052623a41c92",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_36_48.png",
+      "source_sha256": "3e8a20aba9cfea837b009454d0078eb887ac12ef0151706e53201de10c35cb26"
+    },
+    {
+      "key": "vacuum_cleaner",
+      "label": "Aspirador de Pó",
+      "aliases": [
+        "aspirador de po"
+      ],
+      "exclude": [
+        "filtro para aspirador",
+        "saco para aspirador"
+      ],
+      "description": "A dark canister vacuum cleaner with hose and floor head.",
+      "sha256": "b5d363b5854f8ab269eeaf3cda98206378db253144b2bb6cc422c76ca14e66ec",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_36_53.png",
+      "source_sha256": "5b519c99762bbe2b21f345a81ed7301a75b554338c0de8bae64a777afddbf4ea"
+    },
+    {
+      "key": "dish_drying_mat",
+      "label": "Esteira Escorredor de Louças",
+      "aliases": [
+        "esteira escorredor de loucas",
+        "esteira escorredora de loucas",
+        "tapete escorredor de loucas"
+      ],
+      "exclude": [],
+      "description": "A gray ribbed silicone dish drying mat.",
+      "sha256": "66040f9bcfbc52bf4f47d571b2fb4fc57b99a1c6b20b0092810950cdb07f8986",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_36_56.png",
+      "source_sha256": "2fe0d8d221e14bd9bfb9754713ab5bc18aeda2ae688e9ddc6a6ed7cd463ac6c9"
+    },
+    {
+      "key": "toilet_brush",
+      "label": "Escova Sanitária",
+      "aliases": [
+        "escova sanitaria"
+      ],
+      "exclude": [
+        "refil de escova"
+      ],
+      "description": "A white toilet brush and matching holder.",
+      "sha256": "971d3798ddd375f4da6f0ede9719b4a7c302d4d4273e59c32d34a05ae54bb513",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_37_00.png",
+      "source_sha256": "51ba5fee5c141c5af493e779389635fdf2b1392b75d607a230c15631d4a394b9"
+    },
+    {
+      "key": "steel_grater",
+      "label": "Ralador Inox",
+      "aliases": [
+        "ralador inox",
+        "ralador de inox",
+        "ralador de aco inox",
+        "ralador"
+      ],
+      "exclude": [
+        "ralador eletrico"
+      ],
+      "description": "A stainless-steel box grater with black handle.",
+      "sha256": "70f14b724aeb819865b2303792f10707d773cc0645900ffde4c8627cbdd8c687",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_37_03.png",
+      "source_sha256": "32cb05999905090f9fbdb031b5da179a0f2791dbf72242c897d2e950f75a8ef7"
+    },
+    {
+      "key": "clothes_hangers",
+      "label": "Cabides de Roupa",
+      "aliases": [
+        "cabide de roupa",
+        "cabides"
+      ],
+      "exclude": [],
+      "description": "Three wooden clothes hangers with metal hooks.",
+      "sha256": "06f29c273a0890e69dd1beb9ec934baa45381b3c1c8ca18e3c0ca581d886205d",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_37_05.png",
+      "source_sha256": "e6237724fb7478b1be7116a1b50473e10375b088ba08ca942207960e88a99763"
+    },
+    {
+      "key": "air_fryer",
+      "label": "Air fryer",
+      "aliases": [
+        "air fryer",
+        "airfryer",
+        "fritadeira sem oleo"
+      ],
+      "exclude": [
+        "cesto de air fryer",
+        "cesto de airfryer",
+        "forma de air fryer",
+        "forma de airfryer",
+        "papel de air fryer",
+        "papel de airfryer"
+      ],
+      "description": "A plain black countertop air fryer with pull-out drawer.",
+      "sha256": "36c6090f39ba91030b686eca8912a00a5c9573be05fbd0456ff8582a2cc94008",
+      "source": "User attachment 15imagensnovassite.zip; reused without generation",
+      "source_png": "Imagem do ChatGPT 28 de out. de 2026, 01_37_08.png",
+      "source_sha256": "e5d3bff27d135205e60646a311dc7513ac7a398e4c589da8d6f9cfc390adb847"
     }
-  ]
+  ],
+  "updated_on": "2026-10-28"
 }

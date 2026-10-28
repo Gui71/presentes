@@ -57,6 +57,21 @@ class IllustrationMatchingTests(SimpleTestCase):
         "sandwich_maker": ("sanduicheira", "sanduicheiras"),
         "clothes_iron": ("ferro de passar", "ferros de passar"),
         "waffle_maker": ("mini máquina de waffle", "mini máquinas de waffles"),
+        "oven_mitts": ("luva térmica de forno", "luvas térmicas de forno"),
+        "corkscrew": ("saca rolha", "saca rolhas"),
+        "bottle_opener": ("abridor de garrafa", "abridores de garrafas"),
+        "can_opener": ("abridor de lata", "abridores de latas"),
+        "closet_organizers": ("organizador de armário", "organizadores de armários"),
+        "vegetable_cutter": ("cortador de legumes", "cortadores de legumes"),
+        "pressure_cooker": ("panela de pressão", "panelas de pressão"),
+        "broom_squeegee_dustpan": ("kit vassoura/rodo/pá", "kits vassouras/rodos/pás"),
+        "double_wall_coffee_cups": ("xícara de café vidro duplo", "xícaras de café vidro duplo"),
+        "vacuum_cleaner": ("aspirador de pó", "aspiradores de pó"),
+        "dish_drying_mat": ("esteira escorredor de louça", "esteiras escorredores de louças"),
+        "toilet_brush": ("escova sanitária", "escovas sanitárias"),
+        "steel_grater": ("ralador inox", "raladores inox"),
+        "clothes_hangers": ("cabide de roupa", "cabides de roupas"),
+        "air_fryer": ("air fryer", "airfryer"),
     }
 
     def assert_matches(self, name, expected):
@@ -114,7 +129,7 @@ class IllustrationMatchingTests(SimpleTestCase):
     def test_unknown_words_accessories_and_uncovered_variants_keep_the_fallback(self):
         names = (
             "Presente", "Produto", "kit", "B07WGQ64QR", "superpanela", "panelagem", "copoide",
-            "Chaleira", "panela de pressão", "panelas de pressao", "panela elétrica",
+            "Chaleira", "panela de pressão elétrica", "panela elétrica",
             "panela de arroz", "panela a vapor", "panela de pipoca elétrica", "pipoqueiras elétricas",
             "cafeteiras italianas", "cápsulas para cafeteiras", "processador de alimentos",
             "toalhas de mesa", "toalhas de praia", "toalhas de papel", "toalha de cozinha",
@@ -125,8 +140,33 @@ class IllustrationMatchingTests(SimpleTestCase):
             "tampas para pirex redondos", "tampa de pote de vidro", "tampa de pote plástico",
             "sacos de lixeira", "suporte para toalhas", "tampas para mini processadores",
             "placas de sanduicheiras", "capa de ferro de passar", "placa de máquina de waffles",
+            "cesto de air fryer", "forma de airfryer", "papel de air fryer",
+            "filtro para aspirador de pó", "saco para aspiradores de pó",
+            "tampa de panela de pressão", "ralador elétrico", "abridor elétrico de latas",
         )
         for name in names:
+            with self.subTest(name=name):
+                self.assertIsNone(match_illustration(name))
+
+    def test_new_specific_objects_and_sets_do_not_guess_between_distinct_objects(self):
+        for name, key in {
+            "Par de Luvas Térmicas de Forno": "oven_mitts",
+            "Saca-Rolhas": "corkscrew",
+            "Organizador de Armário (caixinhas)": "closet_organizers",
+            "Kit Vassoura/Rodo/Pá de lixo": "broom_squeegee_dustpan",
+            "Kit de vassoura, rodo e pá de lixo": "broom_squeegee_dustpan",
+            "Xícaras de Café Vidro Duplo": "double_wall_coffee_cups",
+            "Xícaras de café de parede dupla": "double_wall_coffee_cups",
+            "Panela de Pressão Inox": "pressure_cooker",
+            "Fritadeira sem óleo": "air_fryer",
+        }.items():
+            with self.subTest(name=name):
+                self.assert_matches(name, key)
+        for name in (
+            "panela de pressão e panela", "panela e air fryer",
+            "abridor de latas e abridor de garrafas", "cabides e escova sanitária",
+            "kit vassoura rodo pá e liquidificador", "xícaras de café vidro duplo e copos",
+        ):
             with self.subTest(name=name):
                 self.assertIsNone(match_illustration(name))
 

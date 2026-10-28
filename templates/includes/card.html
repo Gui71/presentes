@@ -11,16 +11,14 @@
     <div class="product-body">
       <h3>{{ product.name }}</h3>
       {% if product.illustration_key and product.has_available_image %}<p class="illustration-caption">Imagem ilustrativa gerada por IA.</p>{% endif %}
-      {% if product.is_selected %}<p class="selected-label">Já selecionado</p>
-      {% else %}
+      {% if product.is_selected %}<p class="selected-label">Já selecionado por <strong>{{ product.selection.public_name }}</strong></p>{% endif %}
         <div class="store-links">{% for link in product.links.all %}{% with store=link.store %}
           <a class="store-button {{ store.style }}" href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ store.label }}
             <svg class="external-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 3h8v8M13 3 3 13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
             {% if not store.known %}<small>{{ store.domain }}</small>{% endif %}
           </a>
         {% endwith %}{% endfor %}</div>
-        {% if allow_choices %}<a class="button primary choose-button" href="{% url 'choose_product' product.pk %}" data-choose data-name="{{ product.name }}">Escolher este presente</a>{% endif %}
-      {% endif %}
+        {% if allow_choices and not product.is_selected %}<a class="button primary choose-button" href="{% url 'choose_product' product.pk %}" data-choose data-name="{{ product.name }}">Escolher este presente</a>{% endif %}
     </div>
   </article>
   {% if allow_choices and product.is_mine %}<form action="{% url 'cancel_selection_visitor' product.pk %}" method="post" class="cancel-choice-form">{% csrf_token %}<button type="submit" class="text-button" data-cancel-choice>Cancelar minha escolha</button></form>{% endif %}

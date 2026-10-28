@@ -85,6 +85,12 @@ class Selection(models.Model):
     surname = models.CharField("Primeiro sobrenome", max_length=80)
     created_at = models.DateTimeField("Confirmado em", auto_now_add=True)
 
+    @property
+    def public_name(self):
+        """Nome para o card público, sem modificar o sobrenome armazenado."""
+        surname_words = self.surname.split()
+        return " ".join(part for part in (self.first_name, surname_words[0] if surname_words else "") if part)
+
     class Meta:
         verbose_name = "escolha"
         verbose_name_plural = "escolhas"

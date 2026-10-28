@@ -1,6 +1,8 @@
 # Chá de casa nova
 
-Lista de presentes de Beatriz e Guilherme, em português do Brasil. Evento em **22/11/2026**; endereço ainda não informado. Django 5.2 LTS, templates HTML, CSS e JavaScript puro, na mesma origem. Sem pagamento ou integração de compra.
+Lista de presentes de Beatriz e Guilherme, em português do Brasil. Evento em **22/11/2026, às 15h**; endereço ainda não informado. Cores: branco, preto, cinza claro, cinza escuro, bege, marrom e transparente. Django 5.2 LTS, templates HTML, CSS e JavaScript puro, na mesma origem. Sem pagamento ou integração de compra.
+
+Os links de compra no site são apenas referências: fique à vontade para comprar onde preferir.
 
 A página inicial tem uma abertura breve com uma ambientação da foto real da sala fornecida pelo usuário, editada nesta conversa com a ferramenta de imagens da OpenAI e servida localmente em `static/images/living-room-splash.webp`. A edição preserva o espaço compacto, as portas, o piso e o ventilador, remove as duas latas de tinta e acrescenta sofá, tapete, TV com painel, mesa pequena e cortina em tons de branco, marrom e cinza. O zoom suave termina em cerca de 2,3 segundos e pode ser pulado pelo botão ou por Escape. A abertura aparece uma vez por aba; `sessionStorage` guarda somente essa preferência visual, sem dados de visitantes ou de autenticação. Movimento reduzido, imagem indisponível ou JavaScript desativado permitem seguir diretamente para a identificação/lista. A imagem de fundo anterior foi preservada.
 
@@ -40,12 +42,12 @@ Para cancelar escolhas pelo painel, conceda também **Pode excluir escolha** (`g
 
 - Antes de carregar produtos, o servidor exige apenas nome e primeiro sobrenome. Acentos e grafias legítimas são aceitos. Esses dados não autenticam uma identidade e não concedem permissões administrativas.
 - O convidado confirma a escolha no site. Cada produto admite **uma única escolha ativa**, inclusive em confirmações concorrentes; uma pessoa pode escolher vários presentes.
-- Os já selecionados vão para o final da lista, com ordem estável dentro dos grupos. O card inteiro fica esmaecido, mostra **Já selecionado** e não contém nenhum link de compra/seleção. O cancelamento legítimo fica fora do card e restaura todos os links. Os nomes aparecem somente aos gestores.
+- Os já selecionados vão para o final da lista, com ordem estável dentro dos grupos. Somente o card reservado fica esmaecido e mostra **Já selecionado** e, em negrito, o nome informado e a primeira palavra do sobrenome para todos os convidados identificados. Os links de compra continuam clicáveis; o botão de reservar deixa de aparecer e o servidor continua recusando reservas duplicadas. O cancelamento legítimo fica fora do card e devolve o item ao grupo de disponíveis.
 - A confirmação é persistida no banco. Fechar a visita não libera automaticamente os produtos; gestores autorizados podem cancelar escolhas pelo painel ou admin.
 - O convidado pode cancelar cada uma das próprias escolhas durante a mesma sessão, preservando as outras e podendo escolher novos itens. O botão aparece apenas nas escolhas da sessão atual. O servidor exige o identificador secreto dessa sessão: **o nome não autoriza cancelamento**, e repeti-lo em outra sessão não dá acesso às escolhas anteriores. Não há token de autorização em localStorage ou armazenamento permanente no navegador.
 - As escolhas guardam nome e primeiro sobrenome para consulta exclusiva dos gestores. O identificador de autorização é armazenado como digest no registro da escolha. Quando a sessão se perde, o convidado perde o acesso ao cancelamento; a escolha permanece no banco e pode ser cancelada pelos gestores. Foi expressamente aceita a limitação de que navegadores podem restaurar sessões ao reabrir.
 
-Na área dos anfitriões (`/painel/`), a seção **Escolhas confirmadas**, abaixo dos cards, mostra cada presente reservado e o **nome + primeiro sobrenome** informados pelo convidado. Isso exige conta ativa com `gifts.view_product`; a lista pública não mostra esses nomes. Cancelar exige a permissão adicional descrita acima.
+Na área dos anfitriões (`/painel/`), a seção **Escolhas confirmadas**, abaixo dos cards, mantém o nome e o campo sobrenome completos informados pelo convidado, mesmo que contenha várias palavras. Isso exige conta ativa com `gifts.view_product`; o card público mostra somente o nome e a primeira palavra do sobrenome, sem modificar os dados armazenados. Cancelar exige a permissão adicional descrita acima.
 
 Administradores usam sessão nativa do Django no servidor, cookies HttpOnly/SameSite=Lax e duração do navegador (`set_expiry(0)` nos dois logins). Não há “Lembrar de mim”, JWT ou autenticação em localStorage. Logout exige POST com CSRF e invalida a sessão no banco.
 
@@ -53,9 +55,9 @@ Administradores usam sessão nativa do Django no servidor, cookies HttpOnly/Same
 
 ## Cadastro e imagens
 
-O formulário contém nome do produto, links de compra ordenados (até 10) e o seletor opcional de ilustração. O seletor mostra os nomes genéricos das 47 artes e começa em **Automática pelo nome**. A chave de envio impede duplicação do mesmo cadastro e é vinculada à sessão do gestor.
+O formulário contém nome do produto, links de compra ordenados (até 10) e o seletor opcional de ilustração. O seletor mostra os nomes genéricos das 62 artes e começa em **Automática pelo nome**. A chave de envio impede duplicação do mesmo cadastro e é vinculada à sessão do gestor.
 
-Por escolha explícita de custo zero de API, usamos **47 ilustrações geradas nesta conversa com a ferramenta de imagens da OpenAI**, armazenadas no catálogo local. O site não chama OpenAI, fal.ai ou Pollinations, não consulta anúncios e não executa inferência na VM. A assinatura Plus é separada da API; não há chave de geração para configurar nem serviço pago a habilitar.
+Por escolha explícita de custo zero de API, usamos **62 ilustrações locais**: as 47 artes anteriores e 15 reaproveitadas do arquivo `15imagensnovassite.zip` enviado pelo usuário, recodificadas para WebP e adicionadas ao catálogo com hashes de origem. Nenhuma nova geração foi necessária nesta atualização. O site não chama OpenAI, fal.ai ou Pollinations, não consulta anúncios e não executa inferência na VM. A assinatura Plus é separada da API; não há chave de geração para configurar nem serviço pago a habilitar.
 
 Ao cadastrar um presente com nome reconhecido ou ilustração escolhida no seletor, o servidor valida o asset e salva uma cópia em `MEDIA_ROOT`. Links curtos, opacos, indisponíveis ou com rastreamento não afetam a imagem. Nomes vagos, ambíguos ou objetos não cobertos ficam com o padrão local até uma escolha manual no catálogo. Não se escolhe uma imagem aleatória nem se interpreta o anúncio pela URL.
 

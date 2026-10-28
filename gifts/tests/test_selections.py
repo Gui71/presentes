@@ -43,11 +43,41 @@ class SelectionTests(TestCase):
         self.client.post(reverse("choose_product", args=[self.first.pk]))
         self.assertEqual(Selection.objects.count(), 2)
         page = other.get(reverse("catalog"))
-        self.assertNotContains(page, "João")
-        self.assertNotContains(page, "Silva")
+        self.assertContains(page, "<strong>João Silva</strong>", count=2, html=True)
         self.assertContains(page, "Já selecionado", count=2)
 
-    def test_only_authorized_managers_see_names_and_can_cancel(self):
+    def test_public_name_uses_only_first_surname_word_and_preserves_manager_data(self):
+        self.client.post(reverse("identify"), {"first_name": "Maria Clara", "surname": "  D'Ávila\tSilva  Albuquerque  "})
+        self.client.post(reverse("choose_product", args=[self.first.pk]))
+        choice = Selection.objects.get(product=self.first)
+        self.assertEqual(choice.first_name, "Maria Clara")
+        self.assertEqual(choice.surname, "D'Ávila\tSilva  Albuquerque")
+        for guest in (self.client, Client()):
+            if guest is not self.client:
+                self.identify(guest)
+            page = guest.get(reverse("catalog"))
+            self.assertContains(page, "<strong>Maria Clara D&#x27;Ávila</strong>", html=True)
+            self.assertNotContains(page, "Silva")
+            self.assertNotContains(page, "Albuquerque")
+            self.assertNotContains(page, choice.owner_digest)
+        self.client.force_login(self.manager)
+        self.assertContains(self.client.get(reverse("panel")), "Maria Clara D&#x27;Ávila\tSilva  Albuquerque")
+        choice.refresh_from_db()
+        self.assertEqual(choice.surname, "D'Ávila\tSilva  Albuquerque")
+
+    def test_public_selection_name_is_escaped_and_handles_whitespace_surnames(self):
+        choice = Selection.objects.create(product=self.first, first_name='<script>alert("name")</script>', surname="  <img> Other ", owner_digest="private")
+        self.identify(self.client)
+        page = self.client.get(reverse("catalog"))
+        self.assertContains(page, "&lt;script&gt;alert(&quot;name&quot;)&lt;/script&gt; &lt;img&gt;")
+        self.assertNotContains(page, '<script>alert("name")</script>')
+        self.assertNotContains(page, "Other")
+        for surname, expected in (("  Silva\nSantos  ", "Silva"), ("\t\n", ""), ("", "")):
+            with self.subTest(surname=surname):
+                choice.surname = surname
+                self.assertEqual(choice.public_name, choice.first_name + (" " + expected if expected else ""))
+
+    def test_only_authorized_managers_can_cancel(self):
         self.identify(self.client)
         self.client.post(reverse("choose_product", args=[self.first.pk]))
         self.client.force_login(self.manager)
